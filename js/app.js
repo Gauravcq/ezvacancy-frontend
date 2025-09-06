@@ -3,35 +3,23 @@
 // =================================================================
 // CONFIGURATION
 // =================================================================
-
-// Aapke live backend API ka address (ise kabhi na badlein)
 const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
 
-
 // =================================================================
-// HELPER FUNCTIONS (Kaam aasan karne ke liye)
+// HELPER FUNCTIONS
 // =================================================================
 
-/**
- * Yeh function ek post (job, admit card, ya result) ke liye HTML list item banata hai.
- * @param {object} item - Job, Admit Card, ya Result ka data object
- * @param {string} type - 'notification', 'admit-card', ya 'result'
- * @returns {HTMLElement} - Ek 'a' tag wala HTML element
- */
-function createListItem(item, type) {
+function createListItem(item) {
     const element = document.createElement('a');
-    let url = '#'; // Default URL agar koi link na ho
-
-    // Type ke hisaab se sahi link set karo
-    if (type === 'admit-card' && item.downloadUrl) url = item.downloadUrl;
-    if (type === 'result' && item.resultUrl) url = item.resultUrl;
-    if (type === 'notification' && (item.noticeUrl || item.applyUrl)) url = item.noticeUrl || item.applyUrl;
+    let url = '#';
+    if (item.downloadUrl) url = item.downloadUrl;
+    if (item.resultUrl) url = item.resultUrl;
+    if (item.noticeUrl || item.applyUrl) url = item.noticeUrl || item.applyUrl;
 
     element.href = url;
-    element.target = "_blank"; // Link hamesha naye tab mein khulega
+    element.target = "_blank";
     element.className = "block p-3 border-b dark:border-slate-700 last:border-b-0 hover:bg-slate-50 dark:hover:bg-slate-700/50";
     
-    // Title ke liye check karo, kyunki Job mein 'title' hota hai aur baaki mein 'examName'
     const title = item.title || item.examName;
     const organization = item.organization || '';
 
@@ -43,62 +31,41 @@ function createListItem(item, type) {
 }
 
 // =================================================================
-// DATA FETCHING FUNCTIONS (Backend se data laane waale)
+// DATA FETCHING FUNCTIONS
 // =================================================================
 
-/**
- * Yeh general function backend se data laakar ek specific container mein bharta hai.
- * @param {string} endpoint - API ka raasta, jaise 'jobs' ya 'admit-cards'
- * @param {string} containerId - HTML element ki ID jahan data dikhana hai
- * @param {string} itemType - 'notification', 'admit-card', ya 'result'
- * @param {number} limit - Kitne items dikhane hain
- */
-async function populateSection(endpoint, containerId, itemType, limit = 5) {
+async function populateSection(endpoint, containerId, limit = 5) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Error: Container with ID '${containerId}' not found.`);
-        return;
-    }
+    if (!container) return;
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/${endpoint}?limit=${limit}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch ${endpoint}. Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Failed to fetch ${endpoint}`);
         const { data } = await response.json();
         
-        container.innerHTML = ''; // Loading... message hatao
+        container.innerHTML = '';
 
         if (data.length === 0) {
             container.innerHTML = `<p class="p-4 text-center text-slate-500">No new updates found.</p>`;
             return;
         }
         data.forEach(item => {
-            const listItem = createListItem(item, itemType);
+            const listItem = createListItem(item);
             container.appendChild(listItem);
         });
     } catch (error) {
-        console.error(`Error fetching data for ${containerId}:`, error);
+        console.error(`Error for ${containerId}:`, error);
         container.innerHTML = `<p class="p-4 text-center text-red-500">Could not load data.</p>`;
     }
 }
 
-/**
- * Yeh function category waale cards ke liye data laata hai.
- * Yeh sirf jobs se data laayega jo specific category ke honge.
- * @param {string} category - Jaise 'SSC', 'Banking', 'Railway'
- * @param {string} containerId - HTML element ki ID
- */
 async function populateCategoryCard(category, containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Error: Container with ID '${containerId}' not found.`);
-        return;
-    }
+    if (!container) return;
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/jobs?category=${category}&limit=2`);
-        if (!response.ok) throw new Error(`Failed to fetch for category ${category}`);
+        if (!response.ok) throw new Error(`Failed for ${category}`);
         const { data } = await response.json();
 
         container.innerHTML = '';
@@ -108,22 +75,19 @@ async function populateCategoryCard(category, containerId) {
             return;
         }
         data.forEach(item => {
-            const listItem = createListItem(item, 'notification');
+            const listItem = createListItem(item);
             container.appendChild(listItem);
         });
     } catch (error) {
-        console.error(`Error fetching for category container ${containerId}:`, error);
+        console.error(`Error for ${containerId}:`, error);
         container.innerHTML = `<p class="p-4 text-center text-red-500">Could not load posts.</p>`;
     }
 }
 
 // =================================================================
-// UI FUNCTIONS (Website ke features chalu karne waale)
+// UI FUNCTIONS
 // =================================================================
 
-/**
- * Dark mode toggle button ke liye function
- */
 function initTheme() {
     const themeToggle = document.getElementById('themeToggle');
     const lightIcon = document.getElementById('theme-icon-light');
@@ -142,37 +106,32 @@ function initTheme() {
         }
     };
 
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     applyTheme(savedTheme);
 
     themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
         localStorage.setItem('theme', newTheme);
         applyTheme(newTheme);
     });
 }
 
 // =================================================================
-// INITIALIZATION (Jab page load ho, toh sab kuch shuru karo)
+// INITIALIZATION
 // =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Top "Latest Updates" section ke liye data load karo
-    populateSection('jobs', 'notifications-list', 'notification');
-    populateSection('admit-cards', 'admit-cards-list', 'admit-card');
-    populateSection('results', 'results-list', 'result');
+    populateSection('jobs', 'notifications-list');
+    populateSection('admit-cards', 'admit-cards-list');
+    populateSection('results', 'results-list');
 
-    // "Browse by Category" section ke liye data load karo
     populateCategoryCard('SSC', 'ssc-posts-list');
     populateCategoryCard('Banking', 'bank-posts-list');
     populateCategoryCard('Railway', 'railway-posts-list');
 
-    // Website ke baaki features chalu karo
     initTheme();
     AOS.init({ once: true, duration: 600 });
     
-    // Footer mein saal (year) ko automatic update karo
     const yearSpan = document.getElementById('year');
     if (yearSpan) {
         yearSpan.textContent = new Date().getFullYear();
