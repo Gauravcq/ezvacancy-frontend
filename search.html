@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search — EZ Vacancy</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>tailwind.config={darkMode:'class', theme:{extend:{colors:{brand:'#2563eb'}}}}</script>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="h-8 w-8 rounded bg-brand text-white grid place-content-center font-bold">EV</div>
+        <div class="font-semibold">Search</div>
+      </a>
+      <div class="ml-auto"></div>
+    </div>
+  </header>
+  <main class="mx-auto max-w-6xl px-4 py-6">
+    <form id="searchForm" class="flex flex-wrap gap-2 mb-4">
+      <input id="q" class="flex-1 min-w-[220px] rounded border px-3 py-2 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700" placeholder="Search exams, posts...">
+      <select id="type" class="rounded border px-3 py-2 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700">
+        <option value="">All types</option>
+        <option value="notification">Notification</option>
+        <option value="admit">Admit Card</option>
+        <option value="result">Result</option>
+        <option value="answer">Answer Key</option>
+        <option value="syllabus">Syllabus</option>
+        <option value="paper">Previous Paper</option>
+      </select>
+      <select id="scope" class="rounded border px-3 py-2 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700">
+        <option value="">All</option>
+        <option value="central">Central</option>
+        <option value="state">State</option>
+      </select>
+      <button class="rounded bg-brand text-white px-4">Search</button>
+    </form>
+    <div id="count" class="text-sm text-slate-500 mb-2"></div>
+    <ul id="results" class="divide-y divide-slate-200 dark:divide-slate-800"></ul>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+  <script type="module" src="./js/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EZ Vacancy — Government Job Information Portal</title>
+  <meta name="description" content="EZ Vacancy: Latest government jobs, admit cards, results, notifications, answer keys, syllabus, and exam updates." />
+  <meta name="theme-color" content="#2563eb" />
+  <meta property="og:title" content="EZ Vacancy — Govt Job Portal">
+  <meta property="og:description" content="Latest government jobs, admit cards, results, notifications.">
+  <meta property="og:type" content="website">
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/ev-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="icons/ev-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind with plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], dev: ['Noto Sans Devanagari','Inter','sans-serif'] },
+          colors: { brand: { DEFAULT:'#2563eb', 50:'#eff6ff', 100:'#dbeafe', 600:'#2563eb', 700:'#1d4ed8', 800:'#1e40af' }, accent:'#22c55e' },
+          boxShadow: { soft:'0 8px 30px rgba(2,6,23,.08)' }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+  <style>
+    .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(8px); }
+    .dark .glass { background: rgba(15,23,42,.6); }
+  </style>
+</head>
+<body class="bg-gray-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 font-sans">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-white dark:bg-slate-800 px-3 py-1 rounded">Skip to content</a>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 glass shadow-soft border-b border-white/20 dark:border-white/10">
+    <div class="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
+      <a href="/" class="flex items-center gap-2">
+        <div class="h-9 w-9 rounded-lg bg-brand-600 text-white grid place-content-center font-bold">EV</div>
+        <div class="text-lg font-bold">EZ Vacancy</div>
+      </a>
+
+      <nav class="hidden md:flex ml-6 gap-5 text-sm">
+        <a class="hover:text-brand-600" href="#latest">Jobs</a>
+        <a class="hover:text-brand-600" href="#admit-cards">Admit Cards</a>
+        <a class="hover:text-brand-600" href="#results">Results</a>
+        <a class="hover:text-brand-600" href="#answer-keys">Answer Keys</a>
+        <a class="hover:text-brand-600" href="calendar.html">Calendar</a>
+        <a class="hover:text-brand-600" href="favorites.html">Favorites</a>
+        <a class="hover:text-brand-600" href="typing.html">Typing</a>
+      </nav>
+
+      <!-- Search box -->
+      <div class="relative ml-auto w-full md:w-[420px]">
+        <input id="searchInput" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 px-3 py-2 pl-9 outline-none focus:ring-2 focus:ring-brand-600" placeholder="Search exams, e.g., SSC CGL, UP Police" />
+        <svg class="absolute left-2.5 top-2.5 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+        <div id="searchResults" class="hidden absolute z-40 mt-1 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-soft"></div>
+      </div>
+
+      <div class="flex items-center gap-2 ml-3">
+        <a href="search.html" title="Open search page" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2">🔎</a>
+        <button id="notifyBtn" title="Enable notifications" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 hover:bg-brand-50 dark:hover:bg-slate-800">🔔</button>
+        <button id="installBtn" title="Install app" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2">⬇️</button>
+        <a href="favorites.html" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2">⭐ <span id="favCount" class="text-xs align-top"></span></a>
+        <button id="themeToggle" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2">🌙</button>
+        <button class="md:hidden rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">☰</button>
+      </div>
+    </div>
+    <div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 px-4 pb-3">
+      <div class="grid gap-2 text-sm py-3">
+        <a class="hover:text-brand-600" href="#latest">Jobs</a>
+        <a class="hover:text-brand-600" href="#admit-cards">Admit Cards</a>
+        <a class="hover:text-brand-600" href="#results">Results</a>
+        <a class="hover:text-brand-600" href="#answer-keys">Answer Keys</a>
+        <a class="hover:text-brand-600" href="calendar.html">Calendar</a>
+        <a class="hover:text-brand-600" href="favorites.html">Favorites</a>
+        <a class="hover:text-brand-600" href="typing.html">Typing</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="absolute -z-10 inset-0 bg-gradient-to-br from-brand-50 via-white to-accent/10 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800"></div>
+    <div class="mx-auto max-w-7xl px-4 py-10 md:py-14">
+      <div class="grid lg:grid-cols-2 items-center gap-8">
+        <div data-aos="fade-right">
+          <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Latest Government Jobs, Results, Admit Cards & Notifications</h1>
+          <p class="mt-4 text-slate-600 dark:text-slate-300">Central and State updates, exam-wise tracking, favorites, calendar, and a fast Typing Practice tool for your prep.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#latest" class="inline-flex items-center gap-2 rounded-lg bg-brand-600 text-white px-4 py-2 hover:bg-brand-700">Browse Latest Jobs →</a>
+            <a href="typing.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800">Start Typing Practice</a>
+          </div>
+          <div class="mt-6 grid grid-cols-3 gap-6 text-sm">
+            <div><div class="text-2xl font-bold" id="statTotal">—</div><div class="text-slate-500">Total Posts</div></div>
+            <div><div class="text-2xl font-bold" id="statToday">—</div><div class="text-slate-500">Today’s Updates</div></div>
+            <div><div class="text-2xl font-bold" id="statFavs">—</div><div class="text-slate-500">Favorites</div></div>
+          </div>
+        </div>
+        <div data-aos="fade-left">
+          <div class="rounded-xl shadow-soft bg-white/80 dark:bg-slate-800/80 p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-xs font-semibold px-2 py-1 rounded bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300">Breaking</span>
+              <span class="text-slate-500 text-sm">Latest Notifications</span>
+            </div>
+            <div class="swiper h-40" id="ticker"><div class="swiper-wrapper" id="tickerSlides"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="mx-auto max-w-7xl px-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 py-3">
+      <div class="flex items-center gap-2 text-sm">
+        <span class="font-semibold">Filter:</span>
+        <button data-scope="all" class="scopeBtn rounded-md bg-slate-100 dark:bg-slate-800 px-3 py-1">All</button>
+        <button data-scope="central" class="scopeBtn rounded-md px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800">Central</button>
+        <button data-scope="state" class="scopeBtn rounded-md px-3 py-1 hover:bg-slate-100 dark:hover:bg-slate-800">State</button>
+      </div>
+      <div class="text-xs text-slate-500">Examples: IBPS, SSC CGL, UPSC, UP Police, Railways</div>
+    </div>
+  </section>
+
+  <!-- Main lists -->
+  <main id="main" class="mx-auto max-w-7xl px-4 pb-16 grid lg:grid-cols-4 gap-5">
+    <section id="latest" class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 overflow-hidden" data-aos="fade-up">
+      <header class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h2 class="font-semibold">Latest Jobs</h2>
+        <div class="text-sm flex items-center gap-2">
+          <select id="sortLatest" class="rounded border px-2 py-1 text-xs bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700">
+            <option value="date-desc">Newest</option>
+            <option value="date-asc">Oldest</option>
+          </select>
+          <a class="text-brand-600 text-sm hover:underline" href="search.html?type=notification">View all</a>
+        </div>
+      </header>
+      <ul id="list-latest" class="divide-y divide-slate-100 dark:divide-slate-800"></ul>
+      <button id="more-latest" class="w-full py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">Load more</button>
+    </section>
+
+    <section id="admit-cards" class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 overflow-hidden" data-aos="fade-up" data-aos-delay="40">
+      <header class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h2 class="font-semibold">Admit Cards</h2>
+        <a class="text-brand-600 text-sm hover:underline" href="search.html?type=admit">View all</a>
+      </header>
+      <ul id="list-admit" class="divide-y divide-slate-100 dark:divide-slate-800"></ul>
+      <button id="more-admit" class="w-full py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">Load more</button>
+    </section>
+
+    <section id="results" class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 overflow-hidden" data-aos="fade-up" data-aos-delay="80">
+      <header class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h2 class="font-semibold">Results</h2>
+        <a class="text-brand-600 text-sm hover:underline" href="search.html?type=result">View all</a>
+      </header>
+      <ul id="list-results" class="divide-y divide-slate-100 dark:divide-slate-800"></ul>
+      <button id="more-results" class="w-full py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">Load more</button>
+    </section>
+
+    <section id="answer-keys" class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 overflow-hidden" data-aos="fade-up" data-aos-delay="120">
+      <header class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h2 class="font-semibold">Answer Keys</h2>
+        <a class="text-brand-600 text-sm hover:underline" href="search.html?type=answer">View all</a>
+      </header>
+      <ul id="list-answer" class="divide-y divide-slate-100 dark:divide-slate-800"></ul>
+      <button id="more-answer" class="w-full py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">Load more</button>
+    </section>
+  </main>
+
+  <!-- Typing CTA -->
+  <section class="mx-auto max-w-7xl px-4 py-12">
+    <div class="rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-700 text-white p-6 md:p-10 grid md:grid-cols-2 gap-6 items-center">
+      <div>
+        <h3 class="text-2xl font-bold">Boost your speed with Typing Practice (English & Hindi)</h3>
+        <p class="mt-2 text-white/80">Exam mode, accuracy tracking, and real-time WPM chart.</p>
+      </div>
+      <div class="flex md:justify-end">
+        <a href="typing.html" class="inline-flex items-center gap-2 bg-white text-brand-700 font-semibold rounded-lg px-4 py-2 hover:bg-brand-50">Try Typing Practice →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards -->
+  <section class="mx-auto max-w-7xl px-4 pb-20">
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-6">
+        <div class="text-lg font-semibold mb-1">Exam Calendar</div>
+        <p class="text-sm text-slate-500 mb-4">Plan your preparation with monthly view of notifications and exams.</p>
+        <a href="calendar.html" class="text-brand-600 hover:underline">Open calendar →</a>
+      </div>
+      <div class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-6">
+        <div class="text-lg font-semibold mb-1">Favorites</div>
+        <p class="text-sm text-slate-500 mb-4">Bookmark exams and quickly revisit important links.</p>
+        <a href="favorites.html" class="text-brand-600 hover:underline">View favorites →</a>
+      </div>
+      <div class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-6">
+        <div class="text-lg font-semibold mb-2">Newsletter</div>
+        <form id="newsletterForm" class="flex gap-2">
+          <input type="email" required placeholder="you@example.com" class="flex-1 rounded border px-3 py-2 text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700">
+          <button class="rounded bg-brand-600 text-white px-4">Subscribe</button>
+        </form>
+        <p class="text-xs text-slate-500 mt-2">We respect your privacy. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 py-10 text-sm">
+    <div class="mx-auto max-w-7xl px-4 grid md:grid-cols-4 gap-6">
+      <div>
+        <div class="font-bold">EZ Vacancy</div>
+        <p class="text-slate-500 mt-2">A centralized portal for government jobs and exam updates.</p>
+      </div>
+      <div>
+        <div class="font-semibold mb-2">Top Categories</div>
+        <ul class="space-y-1 text-slate-500">
+          <li>SSC • UPSC • IBPS • Railway • Police</li>
+          <li>States: UP, Bihar, MP, Rajasthan</li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-semibold mb-2">Resources</div>
+        <ul class="space-y-1 text-slate-500">
+          <li><a href="search.html?type=syllabus">Syllabus</a></li>
+          <li><a href="search.html?type=answer">Answer Keys</a></li>
+          <li><a href="search.html?type=paper">Previous Papers</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-semibold mb-2">Legal</div>
+        <p class="text-slate-500">We aggregate official links; verify details on the official site before applying.</p>
+      </div>
+    </div>
+    <div class="mx-auto max-w-7xl px-4 mt-6 text-xs text-slate-500">© <span id="year"></span> EZ Vacancy • <a class="hover:underline" href="sitemap.xml">Sitemap</a></div>
+  </footer>
+
+  <div id="toast" class="fixed bottom-4 right-4 hidden"></div>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js"></script>
+
+  <!-- App -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

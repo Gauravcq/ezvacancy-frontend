@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Typing Practice — EZ Vacancy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>tailwind.config={darkMode:'class', theme:{extend:{fontFamily:{sans:['Inter','system-ui'],dev:['Noto Sans Devanagari','Inter']}, colors:{brand:'#2563eb'}}}}</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    .caret { position: relative; }
+    .caret::after { content:''; position:absolute; left:0; bottom:-2px; width:2px; height:1.25em; background:#2563eb; animation: blink .9s step-start infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .key { border:1px solid rgba(100,116,139,.35) }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="h-8 w-8 rounded bg-brand text-white grid place-content-center font-bold">EV</div>
+        <div class="font-semibold">Typing Practice</div>
+      </a>
+      <div class="ml-auto flex items-center gap-2">
+        <button id="themeToggle" class="rounded border px-2 py-1 border-slate-300 dark:border-slate-700">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-8">
+    <div class="grid lg:grid-cols-3 gap-6">
+      <section class="lg:col-span-2 space-y-4">
+        <div class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-4">
+          <div class="flex flex-wrap items-center gap-3">
+            <div>
+              <label class="block text-xs text-slate-500">Mode</label>
+              <select id="mode" class="rounded border px-3 py-1.5 text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700">
+                <option value="time-60">Timed: 60s</option>
+                <option value="time-120">Timed: 120s</option>
+                <option value="words-25">Words: 25</option>
+                <option value="words-50">Words: 50</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-500">Language</label>
+              <select id="lang" class="rounded border px-3 py-1.5 text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-500">Exam mode</label>
+              <select id="examMode" class="rounded border px-3 py-1.5 text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700">
+                <option value="off">Off</option>
+                <option value="on">On (Backspace disabled)</option>
+              </select>
+            </div>
+            <label class="inline-flex items-center gap-2 text-sm ml-auto">
+              <input id="sound" type="checkbox" class="accent-brand" />
+              Beep on error
+            </label>
+            <button id="restartBtn" class="rounded bg-brand text-white px-4 py-2">Restart</button>
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-4">
+          <div class="flex items-center justify-between text-sm mb-3">
+            <div>Time: <span id="timeLeft">60</span>s</div>
+            <div>WPM: <span id="wpm">0</span> • Accuracy: <span id="acc">100%</span> • Errors: <span id="errors">0</span></div>
+          </div>
+          <div id="text" class="min-h-[140px] leading-8 text-lg font-dev select-none"></div>
+          <input id="hiddenInput" class="opacity-0 pointer-events-none h-0" aria-hidden="true" />
+          <p class="mt-2 text-xs text-slate-500">Tip: Click anywhere in the text area and start typing. For Hindi, use your OS/IME layout (Inscript/Remington).</p>
+        </div>
+
+        <div class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-4">
+          <canvas id="wpmChart" height="80"></canvas>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-4">
+          <div class="font-semibold mb-2">Session History</div>
+          <div id="history" class="space-y-2 text-sm"></div>
+        </div>
+
+        <div class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-4">
+          <div class="font-semibold mb-2">On-screen Keyboard</div>
+          <div id="kb" class="grid grid-cols-10 gap-1 text-xs">
+            <div class="key rounded-md px-2 py-2 text-center">1</div><div class="key rounded-md px-2 py-2 text-center">2</div><div class="key rounded-md px-2 py-2 text-center">3</div><div class="key rounded-md px-2 py-2 text-center">4</div><div class="key rounded-md px-2 py-2 text-center">5</div><div class="key rounded-md px-2 py-2 text-center">6</div><div class="key rounded-md px-2 py-2 text-center">7</div><div class="key rounded-md px-2 py-2 text-center">8</div><div class="key rounded-md px-2 py-2 text-center">9</div><div class="key rounded-md px-2 py-2 text-center">0</div>
+            <div class="key rounded-md px-2 py-2 text-center">q</div><div class="key rounded-md px-2 py-2 text-center">w</div><div class="key rounded-md px-2 py-2 text-center">e</div><div class="key rounded-md px-2 py-2 text-center">r</div><div class="key rounded-md px-2 py-2 text-center">t</div><div class="key rounded-md px-2 py-2 text-center">y</div><div class="key rounded-md px-2 py-2 text-center">u</div><div class="key rounded-md px-2 py-2 text-center">i</div><div class="key rounded-md px-2 py-2 text-center">o</div><div class="key rounded-md px-2 py-2 text-center">p</div>
+            <div class="key rounded-md px-2 py-2 text-center">a</div><div class="key rounded-md px-2 py-2 text-center">s</div><div class="key rounded-md px-2 py-2 text-center">d</div><div class="key rounded-md px-2 py-2 text-center">f</div><div class="key rounded-md px-2 py-2 text-center">g</div><div class="key rounded-md px-2 py-2 text-center">h</div><div class="key rounded-md px-2 py-2 text-center">j</div><div class="key rounded-md px-2 py-2 text-center">k</div><div class="key rounded-md px-2 py-2 text-center">l</div><div class="key rounded-md px-2 py-2 text-center">;</div>
+            <div class="key rounded-md px-2 py-2 text-center">z</div><div class="key rounded-md px-2 py-2 text-center">x</div><div class="key rounded-md px-2 py-2 text-center">c</div><div class="key rounded-md px-2 py-2 text-center">v</div><div class="key rounded-md px-2 py-2 text-center">b</div><div class="key rounded-md px-2 py-2 text-center">n</div><div class="key rounded-md px-2 py-2 text-center">m</div><div class="key rounded-md px-2 py-2 text-center">,</div><div class="key rounded-md px-2 py-2 text-center">.</div><div class="key rounded-md px-2 py-2 text-center">?</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="./js/typing.js"></script>
+</body>
+</html>
