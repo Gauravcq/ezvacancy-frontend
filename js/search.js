@@ -1,4 +1,4 @@
-import { posts } from './data.js';
+import { posts } from './app.js';
 
 const qEl = document.getElementById('q');
 const typeEl = document.getElementById('type');

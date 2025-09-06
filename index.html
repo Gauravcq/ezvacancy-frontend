@@ -131,50 +131,62 @@
     </div>
   </section>
 
-  <!-- Main lists -->
-  <main id="main" class="mx-auto max-w-7xl px-4 pb-16 grid lg:grid-cols-4 gap-5">
-    <section id="latest" class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 overflow-hidden" data-aos="fade-up">
-      <header class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 class="font-semibold">Latest Jobs</h2>
-        <div class="text-sm flex items-center gap-2">
-          <select id="sortLatest" class="rounded border px-2 py-1 text-xs bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700">
-            <option value="date-desc">Newest</option>
-            <option value="date-asc">Oldest</option>
-          </select>
-          <a class="text-brand-600 text-sm hover:underline" href="search.html?type=notification">View all</a>
-        </div>
-      </header>
-      <ul id="list-latest" class="divide-y divide-slate-100 dark:divide-slate-800"></ul>
-      <button id="more-latest" class="w-full py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">Load more</button>
-    </section>
+ <!-- index.html ka NAYA MAIN SECTION -->
 
-    <section id="admit-cards" class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 overflow-hidden" data-aos="fade-up" data-aos-delay="40">
-      <header class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 class="font-semibold">Admit Cards</h2>
-        <a class="text-brand-600 text-sm hover:underline" href="search.html?type=admit">View all</a>
-      </header>
-      <ul id="list-admit" class="divide-y divide-slate-100 dark:divide-slate-800"></ul>
-      <button id="more-admit" class="w-full py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">Load more</button>
-    </section>
+<main id="main" class="mx-auto max-w-7xl px-4 py-10">
+  <!-- Responsive Grid Container -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
 
-    <section id="results" class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 overflow-hidden" data-aos="fade-up" data-aos-delay="80">
-      <header class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 class="font-semibold">Results</h2>
-        <a class="text-brand-600 text-sm hover:underline" href="search.html?type=result">View all</a>
+    <!-- Card 1: Notifications (Jobs) -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col">
+      <header class="bg-blue-600 text-white font-bold text-center p-4 rounded-t-lg">
+        Notifications
       </header>
-      <ul id="list-results" class="divide-y divide-slate-100 dark:divide-slate-800"></ul>
-      <button id="more-results" class="w-full py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">Load more</button>
-    </section>
+      <div id="notifications-list" class="flex-grow p-2 space-y-2">
+        <!-- JavaScript yahan jobs daalega -->
+        <p class="p-4 text-center text-slate-500">Loading...</p>
+      </div>
+      <footer class="p-4 mt-auto">
+        <a href="search.html?type=notification" class="block w-full text-center bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-semibold rounded-lg py-2 hover:bg-blue-100 dark:hover:bg-blue-900">
+          View All Notifications
+        </a>
+      </footer>
+    </div>
 
-    <section id="answer-keys" class="rounded-xl bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 overflow-hidden" data-aos="fade-up" data-aos-delay="120">
-      <header class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 class="font-semibold">Answer Keys</h2>
-        <a class="text-brand-600 text-sm hover:underline" href="search.html?type=answer">View all</a>
+    <!-- Card 2: Admit Cards -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col">
+      <header class="bg-amber-500 text-white font-bold text-center p-4 rounded-t-lg">
+        Admit Cards
       </header>
-      <ul id="list-answer" class="divide-y divide-slate-100 dark:divide-slate-800"></ul>
-      <button id="more-answer" class="w-full py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800">Load more</button>
-    </section>
-  </main>
+      <div id="admit-cards-list" class="flex-grow p-2 space-y-2">
+        <!-- JavaScript yahan admit cards daalega -->
+        <p class="p-4 text-center text-slate-500">Loading...</p>
+      </div>
+      <footer class="p-4 mt-auto">
+        <a href="search.html?type=admit" class="block w-full text-center bg-amber-50 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-semibold rounded-lg py-2 hover:bg-amber-100 dark:hover:bg-amber-900">
+          View All Admit Cards
+        </a>
+      </footer>
+    </div>
+
+    <!-- Card 3: Results -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col">
+      <header class="bg-emerald-600 text-white font-bold text-center p-4 rounded-t-lg">
+        Results
+      </header>
+      <div id="results-list" class="flex-grow p-2 space-y-2">
+        <!-- JavaScript yahan results daalega -->
+        <p class="p-4 text-center text-slate-500">Loading...</p>
+      </div>
+      <footer class="p-4 mt-auto">
+        <a href="search.html?type=result" class="block w-full text-center bg-emerald-50 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 font-semibold rounded-lg py-2 hover:bg-emerald-100 dark:hover:bg-emerald-900">
+          View All Results
+        </a>
+      </footer>
+    </div>
+
+  </div>
+</main>
 
   <!-- Typing CTA -->
   <section class="mx-auto max-w-7xl px-4 py-12">
