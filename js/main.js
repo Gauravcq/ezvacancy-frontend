@@ -1,11 +1,20 @@
-// js/main.js (Nayi "Master" File)
+// js/main.js (Final "Master" File with Mobile Nav Fix)
 
-// =================================================================
-// GLOBAL CONFIGURATION & FUNCTIONS (Yeh har page par kaam karenge)
-// =================================================================
-
-// Backend API ka address (ab yeh ek hi jagah par hai)
 const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
+
+/**
+ * Mobile navigation (hamburger menu) ke liye function
+ */
+function initMobileNav() {
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    if (hamburgerBtn && mobileNav) {
+        hamburgerBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('hidden');
+        });
+    }
+}
 
 /**
  * Dark mode toggle button ke liye function
@@ -44,11 +53,11 @@ function initBackToTop() {
     btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 }
 
-
 /**
  * Saare common features ko chalu karne wala function
  */
 function initializeCommonFeatures() {
+    initMobileNav(); // <-- Mobile Nav ko yahan chalu karo
     initTheme(); 
     initBackToTop();
     AOS.init({ once: true, duration: 800, offset: 50 });
