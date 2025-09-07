@@ -1,11 +1,36 @@
-// js/post.js (Corrected Final Version)
+// js/post.js (Nayi File, Final Version)
 
-// Yahan API_BASE_URL ki zaroorat nahi hai, kyunki woh app.js mein pehle se hai
+const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
+
+// Theme toggle function, taaki dark mode is page par bhi kaam kare
+function initTheme() {
+    const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) return;
+    const lightIcon = document.getElementById('theme-icon-light');
+    const darkIcon = document.getElementById('theme-icon-dark');
+    
+    const applyTheme = (theme) => {
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+        if (lightIcon && darkIcon) {
+            lightIcon.classList.toggle('hidden', theme === 'dark');
+            darkIcon.classList.toggle('hidden', theme !== 'dark');
+        }
+    };
+
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Note: Dark mode for this page is handled by app.js
+    initTheme(); // Dark mode chalu karo
     const params = new URLSearchParams(window.location.search);
-    const slug = params.get('slug'); 
+    const slug = params.get('slug'); // URL se slug nikalo (e.g., ?slug=ssc-cgl-2024)
 
     if (slug) {
         fetchPostDetails(slug);

@@ -1,4 +1,4 @@
-// js/app.js (The Absolute Final, Bug-Free, and Professional Version)
+// js/app.js (Final Creative & Bug-Free Version with all fixes)
 
 const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
 
@@ -8,30 +8,22 @@ function createListItem(item) {
     const element = document.createElement('div');
     element.className = 'swiper-slide bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col p-4';
     
-    // Slug se job detail page ka link banayein
-    const detailUrl = item.type === 'notification' ? `post.html?slug=${item.slug}` : (item.downloadUrl || item.resultUrl || '#');
-
+    const detailUrl = item.title ? `post.html?slug=${item.slug}` : (item.downloadUrl || item.resultUrl || '#');
     const title = item.title || item.examName;
     const organization = item.organization || '';
     
     let tag = '';
-    // Naya, smart tareeka: Item ke 'type' stamp se tag pehchaano
-    switch (item.type) {
-        case 'notification':
-            tag = '<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Notification</span>';
-            break;
-        case 'admit-card':
-            tag = '<span class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-amber-900 dark:text-amber-300">Admit Card</span>';
-            break;
-        case 'result':
-            tag = '<span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-emerald-900 dark:text-emerald-300">Result</span>';
-            break;
-        case 'answer-key':
-            tag = '<span class="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-rose-900 dark:text-rose-300">Answer Key</span>';
-            break;
+    if (item.title) {
+        tag = '<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Notification</span>';
+    } else if (item.resultUrl) {
+        tag = '<span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-emerald-900 dark:text-emerald-300">Result</span>';
+    } else if (item.examName && item.examName.toLowerCase().includes('answer key')) {
+        tag = '<span class="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-rose-900 dark:text-rose-300">Answer Key</span>';
+    } else if (item.downloadUrl) {
+        tag = '<span class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-amber-900 dark:text-amber-300">Admit Card</span>';
     }
 
-    element.innerHTML = `<div class="flex-grow"><div class="mb-2">${tag}</div><h3 class="font-bold text-slate-800 dark:text-slate-100">${title}</h3><p class="text-sm text-slate-500 dark:text-slate-400 mt-1">${organization}</p></div><a href="${detailUrl}" ${ (item.type !== 'notification') ? 'target="_blank"' : '' } class="mt-4 inline-block font-semibold text-blue-600 hover:underline">View Details →</a>`;
+    element.innerHTML = `<div class="flex-grow"><div class="mb-2">${tag}</div><h3 class="font-bold text-slate-800 dark:text-slate-100">${title}</h3><p class="text-sm text-slate-500 dark:text-slate-400 mt-1">${organization}</p></div><a href="${detailUrl}" ${ (item.downloadUrl || item.resultUrl || (item.examName && item.examName.toLowerCase().includes('answer key'))) ? 'target="_blank"' : '' } class="mt-4 inline-block font-semibold text-blue-600 hover:underline">View Details →</a>`;
     return element;
 }
 
@@ -60,18 +52,10 @@ async function initUpdatesSwiper() {
 
         if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerKeysRes.ok) throw new Error('One or more API requests failed');
 
-        // Data nikalo aur har ek ko 'type' ka stamp lagao
-        let { data: jobs } = await jobsRes.json();
-        jobs = jobs.map(item => ({ ...item, type: 'notification' }));
-        
-        let { data: admitCards } = await admitCardsRes.json();
-        admitCards = admitCards.map(item => ({ ...item, type: 'admit-card' }));
-        
-        let { data: results } = await resultsRes.json();
-        results = results.map(item => ({ ...item, type: 'result' }));
-        
-        let { data: answerKeys } = await answerKeysRes.json();
-        answerKeys = answerKeys.map(item => ({ ...item, type: 'answer-key' }));
+        const { data: jobs } = await jobsRes.json();
+        const { data: admitCards } = await admitCardsRes.json();
+        const { data: results } = await resultsRes.json();
+        const { data: answerKeys } = await answerKeysRes.json();
         
         const allUpdates = [...jobs, ...admitCards, ...results, ...answerKeys];
         allUpdates.sort((a, b) => new Date(b.postUpdateDate || b.postDate) - new Date(a.postUpdateDate || a.postDate));
@@ -89,12 +73,27 @@ async function initUpdatesSwiper() {
 }
 
 function initTheme() {
-    const themeToggle = document.getElementById('themeToggle'), lightIcon = document.getElementById('theme-icon-light'), darkIcon = document.getElementById('theme-icon-dark');
-    if (!themeToggle || !lightIcon || !darkIcon) return;
-    const applyTheme = (theme) => { document.documentElement.classList.toggle('dark', theme === 'dark'); lightIcon.classList.toggle('hidden', theme === 'dark'); darkIcon.classList.toggle('hidden', theme !== 'dark'); };
+    const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) return;
+    const lightIcon = document.getElementById('theme-icon-light');
+    const darkIcon = document.getElementById('theme-icon-dark');
+    
+    const applyTheme = (theme) => {
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+        if (lightIcon && darkIcon) {
+            lightIcon.classList.toggle('hidden', theme === 'dark');
+            darkIcon.classList.toggle('hidden', theme !== 'dark');
+        }
+    };
+
     const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     applyTheme(savedTheme);
-    themeToggle.addEventListener('click', () => { const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); });
+
+    themeToggle.addEventListener('click', () => {
+        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    });
 }
 
 function initBackToTop() {
@@ -107,7 +106,9 @@ function initBackToTop() {
 // === INITIALIZATION ===
 
 document.addEventListener('DOMContentLoaded', () => {
-    initUpdatesSwiper(); initTheme(); initBackToTop();
+    initUpdatesSwiper(); 
+    initTheme(); 
+    initBackToTop();
     AOS.init({ once: true, duration: 800, offset: 50 });
     const yearSpan = document.getElementById('year');
     if (yearSpan) yearSpan.textContent = new Date().getFullYear();
