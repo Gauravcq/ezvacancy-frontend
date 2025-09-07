@@ -1,55 +1,67 @@
-import { posts } from './data.js';
-import { formatDate, qs, toggleBookmark, isBookmarked, toast, share, copyToClipboard } from './ui.js';
+// js/post.js (Nayi File, Final Version)
 
-const slug = qs('slug');
-const post = posts.find(p => p.slug === slug);
+const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
 
-const themeToggle = document.getElementById('themeToggle');
-if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark');
-if (themeToggle) themeToggle.addEventListener('click', ()=>{ document.documentElement.classList.toggle('dark'); localStorage.theme = document.documentElement.classList.contains('dark')?'dark':'light'; themeToggle.textContent = document.documentElement.classList.contains('dark') ? '🌞' : '🌙'; });
+function initTheme() {
+    const themeToggle = document.getElementById('themeToggle'), lightIcon = document.getElementById('theme-icon-light'), darkIcon = document.getElementById('theme-icon-dark');
+    if (!themeToggle || !lightIcon || !darkIcon) return;
+    const applyTheme = (theme) => { document.documentElement.classList.toggle('dark', theme === 'dark'); lightIcon.classList.toggle('hidden', theme === 'dark'); darkIcon.classList.toggle('hidden', theme !== 'dark'); };
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(savedTheme);
+    themeToggle.addEventListener('click', () => { const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); });
+}
 
-if (!post) {
-  document.getElementById('post').innerHTML = '<div class="p-4">Post not found.</div>';
-} else {
-  document.title = `${post.title} — EZ Vacancy`;
-  document.getElementById('title').textContent = post.title;
-  document.getElementById('meta').textContent = `${post.sub} • ${post.type.toUpperCase()} • ${formatDate(post.date)}`;
-  document.getElementById('crumbCat').textContent = post.type;
-  document.getElementById('crumbTitle').textContent = post.exam;
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme(); // Dark mode chalu karo
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
 
-  const btnApply = document.getElementById('btnApply');
-  const btnNotice = document.getElementById('btnNotice');
-  const btnPdf = document.getElementById('btnPdf');
-  if (post.apply) { btnApply.href = post.apply; btnApply.classList.remove('hidden'); }
-  if (post.notice) { btnNotice.href = post.notice; btnNotice.classList.remove('hidden'); }
-  if (post.pdf) { btnPdf.href = post.pdf; btnPdf.classList.remove('hidden'); }
+    if (slug) {
+        fetchPostDetails(slug);
+    } else {
+        const container = document.getElementById('post-container');
+        container.innerHTML = `<h1 class="text-2xl font-bold">Post Not Found</h1><p>The link seems to be broken. Please go back to the homepage.</p>`;
+    }
+});
 
-  document.getElementById('content').innerHTML = post.content || '<p>All important links are provided above. Visit the official notification for complete details.</p>';
+async function fetchPostDetails(slug) {
+    const container = document.getElementById('post-container');
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/jobs/${slug}`);
+        if (!response.ok) throw new Error('Post not found');
+        const job = await response.json();
+        
+        document.title = `${job.title} - EZGOVTJOB`;
 
-  const tables = document.getElementById('tables');
-  if (post.importantDates) {
-    const rows = post.importantDates.map(r => `<tr><td class="px-3 py-2 border">${r[0]}</td><td class="px-3 py-2 border">${r[1]}</td></tr>`).join('');
-    tables.insertAdjacentHTML('beforeend', `<div><div class="font-semibold mb-2">Important Dates</div><table class="w-full text-sm border border-slate-200 dark:border-slate-700">${rows}</table></div>`);
-  }
-  if (post.eligibility || post.age) {
-    tables.insertAdjacentHTML('beforeend', `<div><div class="font-semibold mb-2">Eligibility</div><div class="text-sm text-slate-600 dark:text-slate-300">${post.eligibility||''} ${post.age?('<br/>Age: '+post.age):''}</div></div>`);
-  }
+        container.innerHTML = `
+            <h1 class="text-center text-3xl font-extrabold text-blue-600">${job.organization}</h1>
+            <h2 class="text-center text-xl font-bold mt-2">${job.title}</h2>
+            <p class="text-center text-sm text-slate-500 mt-2"><strong>Post Update:</strong> ${new Date(job.postUpdateDate).toLocaleDateString()}</p>
+            <p class="mt-6 text-slate-600 dark:text-slate-300">${job.shortDescription}</p>
+            ${createSection('Important Dates', job.importantDates)}
+            ${createSection('Application Fee', job.applicationFee)}
+            ${createSection('Age Limit', job.ageLimit)}
+            ${createSection('Vacancy Details', job.vacancyDetails)}
+            <div class="mt-8 bg-blue-50 dark:bg-blue-900/50 p-6 rounded-lg">
+                <h3 class="text-xl font-bold text-center mb-4">Important Links</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+                    ${createLink('Apply Online', job.applyUrl)}
+                    ${createLink('Download Notification', job.noticeUrl)}
+                    ${createLink('Official Website', job.officialWebsiteUrl)}
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        container.innerHTML = `<h1 class="text-2xl font-bold text-center">Error 404</h1><p class="text-center">This post could not be found. It may have been moved or deleted.</p>`;
+    }
+}
 
-  const favBtn = document.getElementById('btnFav');
-  const updateFavBtn = () => favBtn.textContent = isBookmarked(post.slug) ? '⭐ Saved' : '☆ Save';
-  updateFavBtn();
-  favBtn.addEventListener('click', () => { const saved = toggleBookmark(post.slug); toast(saved?'Added to favorites':'Removed'); updateFavBtn(); });
+function createSection(title, content) {
+    if (!content) return '';
+    return `<div class="mt-6 border-t dark:border-slate-700 pt-6"><h3 class="text-2xl font-bold mb-3 text-slate-800 dark:text-slate-100">${title}</h3><div class="prose prose-lg dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">${content.replace(/\n/g, '<br>')}</div></div>`;
+}
 
-  document.getElementById('btnShare').addEventListener('click', ()=> share({ title:post.title, text:post.exam, url:location.href }).then(()=>toast('Shared')).catch(()=>{}));
-  document.getElementById('btnCopy').addEventListener('click', ()=> copyToClipboard(location.href).then(()=>toast('Link copied')));
-
-  const related = posts.filter(p => p.slug!==post.slug && (p.sub===post.sub || p.type===post.type)).slice(0,6);
-  document.getElementById('related').innerHTML = related.map(p => `
-    <a href="post.html?slug=${p.slug}" class="block rounded border border-slate-200 dark:border-slate-800 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/60">
-      <div class="text-sm font-medium">${p.title}</div>
-      <div class="text-[11px] text-slate-500">${p.sub} • ${formatDate(p.date)}</div>
-    </a>`).join('');
-
-  const ld = { "@context":"https://schema.org", "@type":"NewsArticle", "headline":post.title, "datePublished":post.date, "author":{"@type":"Organization","name":"EZ Vacancy"} };
-  const s = document.createElement('script'); s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+function createLink(title, url) {
+    if (!url) return '';
+    return `<a href="${url}" target="_blank" class="block bg-blue-600 text-white font-semibold py-2.5 rounded-md hover:bg-blue-700 transition-colors">${title}</a>`;
 }
