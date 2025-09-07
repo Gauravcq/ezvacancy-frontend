@@ -2,8 +2,15 @@
 
 const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
 
-// === HELPER FUNCTIONS ===
+// =================================================================
+// HELPER FUNCTIONS (Kaam aasan karne ke liye)
+// =================================================================
 
+/**
+ * Yeh function ek post (job, admit card, etc.) ke liye HTML card banata hai.
+ * @param {object} item - Backend se aaya hua data object
+ * @returns {HTMLElement} - Ek 'div' element jo Swiper slide hai
+ */
 function createListItem(item) {
     const element = document.createElement('div');
     element.className = 'swiper-slide bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col p-4';
@@ -42,6 +49,10 @@ function createListItem(item) {
     return element;
 }
 
+/**
+ * Yeh function data load hone se pehle dikhne wale placeholders banata hai.
+ * @returns {string} - Skeleton loaders ka HTML
+ */
 function createSkeletonLoader() {
     let skeletonHTML = '';
     for (let i = 0; i < 3; i++) {
@@ -57,8 +68,13 @@ function createSkeletonLoader() {
     return skeletonHTML;
 }
 
-// === DATA FETCHING & UI FUNCTIONS ===
+// =================================================================
+// DATA FETCHING & UI FUNCTIONS
+// =================================================================
 
+/**
+ * Yeh main function hai jo "Latest Updates" section ko data se bharta hai.
+ */
 async function initUpdatesSwiper() {
     const wrapper = document.getElementById('updates-swiper-wrapper');
     if (!wrapper) return;
@@ -72,12 +88,22 @@ async function initUpdatesSwiper() {
             fetch(`${API_BASE_URL}/api/answer-keys?limit=5`)
         ]);
 
-        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerKeysRes.ok) throw new Error('One or more API requests failed');
+        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerKeysRes.ok) {
+            throw new Error('One or more API requests failed. Please check backend logs.');
+        }
 
-        const { data: jobs } = await jobsRes.json();
-        const { data: admitCards } = await admitCardsRes.json();
-        const { data: results } = await resultsRes.json();
-        const { data: answerKeys } = await answerKeysRes.json();
+        // Data nikalo aur har ek ko 'type' ka sticker lagao
+        let { data: jobs } = await jobsRes.json();
+        jobs = jobs.map(item => ({ ...item, type: 'notification' }));
+        
+        let { data: admitCards } = await admitCardsRes.json();
+        admitCards = admitCards.map(item => ({ ...item, type: 'admit-card' }));
+        
+        let { data: results } = await resultsRes.json();
+        results = results.map(item => ({ ...item, type: 'result' }));
+        
+        let { data: answerKeys } = await answerKeysRes.json();
+        answerKeys = answerKeys.map(item => ({ ...item, type: 'answer-key' }));
         
         const allUpdates = [...jobs, ...admitCards, ...results, ...answerKeys];
         allUpdates.sort((a, b) => new Date(b.postUpdateDate || b.postDate) - new Date(a.postUpdateDate || a.postDate));
@@ -103,6 +129,9 @@ async function initUpdatesSwiper() {
     }
 }
 
+/**
+ * Dark mode toggle button ke liye function
+ */
 function initTheme() {
     const themeToggle = document.getElementById('themeToggle');
     if (!themeToggle) return;
@@ -127,6 +156,9 @@ function initTheme() {
     });
 }
 
+/**
+ * "Back to Top" button ke liye function
+ */
 function initBackToTop() {
     const btn = document.getElementById('backToTopBtn');
     if (!btn) return;
@@ -134,13 +166,23 @@ function initBackToTop() {
     btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 }
 
-// === INITIALIZATION ===
+// =================================================================
+// INITIALIZATION (Jab page load ho, toh sab kuch shuru karo)
+// =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    initUpdatesSwiper(); 
+    // Sirf homepage par chalne wale functions
+    if (document.getElementById('updates-swiper-wrapper')) {
+        initUpdatesSwiper();
+    }
+    
+    // Har page par chalne wale functions
     initTheme(); 
     initBackToTop();
     AOS.init({ once: true, duration: 800, offset: 50 });
+    
     const yearSpan = document.getElementById('year');
-    if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
 });
