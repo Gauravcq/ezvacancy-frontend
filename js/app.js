@@ -35,24 +35,60 @@ async function initUpdatesSwiper() {
     if (!wrapper) return;
     wrapper.innerHTML = createSkeletonLoader();
 
-    try {
-        const [jobsRes, admitCardsRes, resultsRes, answerkeyRes] = await Promise.all([ fetch(`${API_BASE_URL}/api/jobs?limit=5`), fetch(`${API_BASE_URL}/api/admit-cards?limit=5`), fetch(`${API_BASE_URL}/api/results?limit=5`), fetch(`${API_BASE_URL}/api/answerkey?limit=5`)]);
-        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerkeyRes.ok) throw new Error('API request failed');
+      try {
+        // Ek saath saare updates ka data mangwao
+        const [jobsRes, admitCardsRes, resultsRes, answerKeysRes] = await Promise.all([
+            fetch(`${API_BASE_URL}/api/jobs?limit=5`),
+            fetch(`${API_BASE_URL}/api/admit-cards?limit=5`),
+            fetch(`${API_BASE_URL}/api/results?limit=5`),
+            fetch(`${API_BASE_URL}/api/answer-keys?limit=5`) // BUG 1: URL THEEK KIYA
+        ]);
 
+        // Check karo ki saare jawab theek se aaye ya nahi
+        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerKeysRes.ok) {
+            throw new Error('One or more API requests failed');
+        }
+
+        // Sabse data nikalo
         const { data: jobs } = await jobsRes.json();
         const { data: admitCards } = await admitCardsRes.json();
         const { data: results } = await resultsRes.json();
-        const { data: answerkey}= await resultsRes.json();
+        const { data: answerKeys } = await answerKeysRes.json(); // BUG 2: YAHAN 'answerKeysRes' HONA CHAHIYE THA
+
+        // Saare data ko ek hi list mein daalo
+        const allUpdates = [...jobs, ...admitCards, ...results, ...answerKeys];
         
-        const allUpdates = [...jobs, ...admitCards, ...results, ...answerkey];
+        // Sabko date ke hisaab se sort karo, taaki sabse naya update pehle aaye
         allUpdates.sort((a, b) => new Date(b.postUpdateDate || b.postDate) - new Date(a.postUpdateDate || a.postDate));
 
         wrapper.innerHTML = '';
-        if (allUpdates.length === 0) { wrapper.innerHTML = `<p class="p-4 text-center text-slate-500">No new updates found.</p>`; return; }
+        if (allUpdates.length === 0) {
+            wrapper.innerHTML = `<p class="p-4 text-center text-slate-500">No new updates found.</p>`;
+            return;
+        }
         
-        allUpdates.forEach(item => wrapper.appendChild(createListItem(item)));
+        allUpdates.forEach(item => {
+            wrapper.appendChild(createListItem(item));
+        });
 
-        new Swiper('#updates-swiper', { slidesPerView: 1, spaceBetween: 16, pagination: { el: '.swiper-pagination', clickable: true }, breakpoints: { 640: { slidesPerView: 2, spaceBetween: 20 }, 1024: { slidesPerView: 3, spaceBetween: 32 } }, autoplay: { delay: 4000, disableOnInteraction: false } });
+        // Ab jab saare slides HTML mein aa gaye hain, tab Swiper ko chalu karo
+        new Swiper('#updates-swiper', {
+            slidesPerView: 1,
+            spaceBetween: 16,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                640: { slidesPerView: 2, spaceBetween: 20 },
+                1024: { slidesPerView: 3, spaceBetween: 32 },
+            },
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+        });
+
     } catch (error) {
         console.error("Error initializing updates swiper:", error);
         wrapper.innerHTML = `<p class="p-4 text-center text-red-500">Could not load updates. Please check the backend.</p>`;
