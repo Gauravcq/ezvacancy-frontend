@@ -1,10 +1,20 @@
-// js/post.js (Theek Kiya Hua Final Version)
+// js/post.js (Nayi File, Final Version)
 
-// Yahan API_BASE_URL ki zaroorat nahi hai, kyunki woh app.js mein pehle se hai
+const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
+
+function initTheme() {
+    const themeToggle = document.getElementById('themeToggle'), lightIcon = document.getElementById('theme-icon-light'), darkIcon = document.getElementById('theme-icon-dark');
+    if (!themeToggle || !lightIcon || !darkIcon) return;
+    const applyTheme = (theme) => { document.documentElement.classList.toggle('dark', theme === 'dark'); lightIcon.classList.toggle('hidden', theme === 'dark'); darkIcon.classList.toggle('hidden', theme !== 'dark'); };
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(savedTheme);
+    themeToggle.addEventListener('click', () => { const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme(); // Dark mode chalu karo
     const params = new URLSearchParams(window.location.search);
-    const slug = params.get('slug'); // URL se slug nikalo (e.g., ?slug=ssc-cgl-2024)
+    const slug = params.get('slug');
 
     if (slug) {
         fetchPostDetails(slug);
@@ -17,11 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchPostDetails(slug) {
     const container = document.getElementById('post-container');
     try {
-        // API_BASE_URL ko yahan use karein, jo app.js se aa raha hai
         const response = await fetch(`${API_BASE_URL}/api/jobs/${slug}`);
-        if (!response.ok) {
-            throw new Error('Post not found');
-        }
+        if (!response.ok) throw new Error('Post not found');
         const job = await response.json();
         
         document.title = `${job.title} - EZGOVTJOB`;
