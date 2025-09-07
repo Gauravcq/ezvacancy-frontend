@@ -36,14 +36,15 @@ async function initUpdatesSwiper() {
     wrapper.innerHTML = createSkeletonLoader();
 
     try {
-        const [jobsRes, admitCardsRes, resultsRes] = await Promise.all([ fetch(`${API_BASE_URL}/api/jobs?limit=5`), fetch(`${API_BASE_URL}/api/admit-cards?limit=5`), fetch(`${API_BASE_URL}/api/results?limit=5`)]);
-        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok) throw new Error('API request failed');
+        const [jobsRes, admitCardsRes, resultsRes, answerkeyRes] = await Promise.all([ fetch(`${API_BASE_URL}/api/jobs?limit=5`), fetch(`${API_BASE_URL}/api/admit-cards?limit=5`), fetch(`${API_BASE_URL}/api/results?limit=5`), fetch(`${API_BASE_URL}/api/answerkey?limit=5`)]);
+        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerkeyRes.ok) throw new Error('API request failed');
 
         const { data: jobs } = await jobsRes.json();
         const { data: admitCards } = await admitCardsRes.json();
         const { data: results } = await resultsRes.json();
+        const { data: answerkey}= await resultsRes.json();
         
-        const allUpdates = [...jobs, ...admitCards, ...results];
+        const allUpdates = [...jobs, ...admitCards, ...results, ...answerkey];
         allUpdates.sort((a, b) => new Date(b.postUpdateDate || b.postDate) - new Date(a.postUpdateDate || a.postDate));
 
         wrapper.innerHTML = '';
