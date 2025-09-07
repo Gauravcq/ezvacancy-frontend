@@ -1,7 +1,9 @@
-// js/main.js (Final "Master" File with Mobile Nav Fix)
+// js/main.js ("Detective" Version)
+
+console.log('Hello from main.js! File is loading.'); // Detective Note 1
 
 // =================================================================
-// GLOBAL CONFIGURATION & FUNCTIONS (Yeh har page par kaam karenge)
+// GLOBAL CONFIGURATION & FUNCTIONS
 // =================================================================
 
 const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
@@ -13,10 +15,18 @@ function initMobileNav() {
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const mobileNav = document.getElementById('mobile-nav');
 
+    console.log('Searching for buttons...', { hamburgerBtn, mobileNav }); // Detective Note 2
+
     if (hamburgerBtn && mobileNav) {
+        console.log('Buttons FOUND! Adding click listener.'); // Detective Note 3
         hamburgerBtn.addEventListener('click', () => {
+            // ULTIMATE TEST: Agar yeh alert dikhta hai, toh sabkuch aacha hai
+            alert('Hamburger button clicked!'); 
+            
             mobileNav.classList.toggle('hidden');
         });
+    } else {
+        console.error('Hamburger button or mobile nav not found!'); // Detective Note 4
     }
 }
 
@@ -24,44 +34,22 @@ function initMobileNav() {
  * Dark mode toggle button ke liye function
  */
 function initTheme() {
-    const themeToggle = document.getElementById('themeToggle');
-    if (!themeToggle) return;
-    const lightIcon = document.getElementById('theme-icon-light');
-    const darkIcon = document.getElementById('theme-icon-dark');
-    
-    const applyTheme = (theme) => {
-        document.documentElement.classList.toggle('dark', theme === 'dark');
-        if (lightIcon && darkIcon) {
-            lightIcon.classList.toggle('hidden', theme === 'dark');
-            darkIcon.classList.toggle('hidden', theme !== 'dark');
-        }
-    };
-
-    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    applyTheme(savedTheme);
-
-    themeToggle.addEventListener('click', () => {
-        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-        localStorage.setItem('theme', newTheme);
-        applyTheme(newTheme);
-    });
+    // ... (yeh function jaisa tha waisa hi rakhein) ...
 }
 
 /**
  * "Back to Top" button ke liye function
  */
 function initBackToTop() {
-    const btn = document.getElementById('backToTopBtn');
-    if (!btn) return;
-    window.addEventListener('scroll', () => btn.classList.toggle('hidden', window.scrollY <= 300));
-    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    // ... (yeh function jaisa tha waisa hi rakhein) ...
 }
 
 /**
  * Saare common features ko chalu karne wala function
  */
 function initializeCommonFeatures() {
-    initMobileNav(); // <-- Mobile Nav ko yahan chalu karo
+    console.log('Initializing all common features...'); // Detective Note 5
+    initMobileNav();
     initTheme(); 
     initBackToTop();
     AOS.init({ once: true, duration: 800, offset: 50 });
@@ -70,4 +58,7 @@ function initializeCommonFeatures() {
 }
 
 // Page load hote hi common features ko chalu karo
-document.addEventListener('DOMContentLoaded', initializeCommonFeatures);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM is ready! Running initializers.'); // Detective Note 6
+    initializeCommonFeatures();
+});
