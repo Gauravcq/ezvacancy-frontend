@@ -1,7 +1,5 @@
 // js/main.js ("Detective" Version)
 
-console.log('Hello from main.js! File is loading.'); // Detective Note 1
-
 // =================================================================
 // GLOBAL CONFIGURATION & FUNCTIONS
 // =================================================================
@@ -17,7 +15,6 @@ function initMobileNav() {
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const mobileNav = document.getElementById('mobile-nav');
 
-    console.log('Searching for buttons...', { hamburgerBtn, mobileNav }); // Detective Note 2
 
     if (hamburgerBtn && mobileNav) {
         console.log('Buttons FOUND! Adding click listener.'); // Detective Note 3
