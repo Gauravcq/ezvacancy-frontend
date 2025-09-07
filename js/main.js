@@ -1,5 +1,9 @@
 // js/main.js (Final "Master" File with Mobile Nav Fix)
 
+// =================================================================
+// GLOBAL CONFIGURATION & FUNCTIONS (Yeh har page par kaam karenge)
+// =================================================================
+
 const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
 
 /**
