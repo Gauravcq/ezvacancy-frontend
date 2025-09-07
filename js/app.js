@@ -1,10 +1,13 @@
-// js/app.js (The Absolute Final, Bug-Free, and Professional Version)
+// js/app.js (Final Version - Sirf Homepage ke liye)
 
-const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
+// Note: API_BASE_URL ab 'main.js' se aa raha hai, isliye yahan zaroorat nahi.
 
-// =================================================================
-// HELPER FUNCTIONS (Kaam aasan karne ke liye)
-// =================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    // Sirf homepage par chalne wale functions
+    if (document.getElementById('updates-swiper-wrapper')) {
+        initUpdatesSwiper();
+    }
+});
 
 /**
  * Yeh function ek post (job, admit card, etc.) ke liye HTML card banata hai.
@@ -15,14 +18,11 @@ function createListItem(item) {
     const element = document.createElement('div');
     element.className = 'swiper-slide bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col p-4';
     
-    // Slug se job detail page ka link banayein
     const detailUrl = item.type === 'notification' ? `post.html?slug=${item.slug}` : (item.downloadUrl || item.resultUrl || '#');
-
     const title = item.title || item.examName;
     const organization = item.organization || '';
     
     let tag = '';
-    // Naya, smart tareeka: Item ke 'type' sticker se tag pehchaano
     switch (item.type) {
         case 'notification':
             tag = '<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Notification</span>';
@@ -68,10 +68,6 @@ function createSkeletonLoader() {
     return skeletonHTML;
 }
 
-// =================================================================
-// DATA FETCHING & UI FUNCTIONS
-// =================================================================
-
 /**
  * Yeh main function hai jo "Latest Updates" section ko data se bharta hai.
  */
@@ -88,11 +84,8 @@ async function initUpdatesSwiper() {
             fetch(`${API_BASE_URL}/api/answer-keys?limit=5`)
         ]);
 
-        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerKeysRes.ok) {
-            throw new Error('One or more API requests failed. Please check backend logs.');
-        }
+        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerKeysRes.ok) throw new Error('One or more API requests failed');
 
-        // Data nikalo aur har ek ko 'type' ka sticker lagao
         let { data: jobs } = await jobsRes.json();
         jobs = jobs.map(item => ({ ...item, type: 'notification' }));
         
@@ -128,61 +121,3 @@ async function initUpdatesSwiper() {
         wrapper.innerHTML = `<p class="p-4 text-center text-red-500">Could not load updates. Please check the backend.</p>`;
     }
 }
-
-/**
- * Dark mode toggle button ke liye function
- */
-function initTheme() {
-    const themeToggle = document.getElementById('themeToggle');
-    if (!themeToggle) return;
-    const lightIcon = document.getElementById('theme-icon-light');
-    const darkIcon = document.getElementById('theme-icon-dark');
-    
-    const applyTheme = (theme) => {
-        document.documentElement.classList.toggle('dark', theme === 'dark');
-        if (lightIcon && darkIcon) {
-            lightIcon.classList.toggle('hidden', theme === 'dark');
-            darkIcon.classList.toggle('hidden', theme !== 'dark');
-        }
-    };
-
-    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    applyTheme(savedTheme);
-
-    themeToggle.addEventListener('click', () => {
-        const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-        localStorage.setItem('theme', newTheme);
-        applyTheme(newTheme);
-    });
-}
-
-/**
- * "Back to Top" button ke liye function
- */
-function initBackToTop() {
-    const btn = document.getElementById('backToTopBtn');
-    if (!btn) return;
-    window.addEventListener('scroll', () => btn.classList.toggle('hidden', window.scrollY <= 300));
-    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-}
-
-// =================================================================
-// INITIALIZATION (Jab page load ho, toh sab kuch shuru karo)
-// =================================================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Sirf homepage par chalne wale functions
-    if (document.getElementById('updates-swiper-wrapper')) {
-        initUpdatesSwiper();
-    }
-    
-    // Har page par chalne wale functions
-    initTheme(); 
-    initBackToTop();
-    AOS.init({ once: true, duration: 800, offset: 50 });
-    
-    const yearSpan = document.getElementById('year');
-    if (yearSpan) {
-        yearSpan.textContent = new Date().getFullYear();
-    }
-});

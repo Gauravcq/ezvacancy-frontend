@@ -6,7 +6,9 @@ console.log('Hello from main.js! File is loading.'); // Detective Note 1
 // GLOBAL CONFIGURATION & FUNCTIONS
 // =================================================================
 
+// js/main.js (Yeh bilkul theek hai, ismein koi change nahi)
 const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
+// ... baaki ka code ...
 
 /**
  * Mobile navigation (hamburger menu) ke liye function
