@@ -1,14 +1,13 @@
-// js/app.js (Final Creative & Bug-Free Version)
-
+// js/app.js (Final Version for Homepage)
 const API_BASE_URL = 'https://ezvacancy-backend.onrender.com';
-
-// === HELPER FUNCTIONS ===
 
 function createListItem(item) {
     const element = document.createElement('div');
     element.className = 'swiper-slide bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col p-4';
     
+    // Naya link jo post.html par slug ke saath jaayega
     const detailUrl = item.title ? `post.html?slug=${item.slug}` : (item.downloadUrl || item.resultUrl || '#');
+
     const title = item.title || item.examName;
     const organization = item.organization || '';
     
@@ -28,8 +27,6 @@ function createSkeletonLoader() {
     }
     return skeletonHTML;
 }
-
-// === DATA FETCHING & UI FUNCTIONS ===
 
 async function initUpdatesSwiper() {
     const wrapper = document.getElementById('updates-swiper-wrapper');
@@ -74,8 +71,6 @@ function initBackToTop() {
     window.addEventListener('scroll', () => btn.classList.toggle('hidden', window.scrollY <= 300));
     btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 }
-
-// === INITIALIZATION ===
 
 document.addEventListener('DOMContentLoaded', () => {
     initUpdatesSwiper(); initTheme(); initBackToTop();
