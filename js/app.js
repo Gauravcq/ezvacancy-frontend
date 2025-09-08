@@ -1,6 +1,4 @@
-// js/app.js (Final Version - Sirf Homepage ke liye)
-
-// Note: API_BASE_URL ab 'main.js' se aa raha hai, isliye yahan zaroorat nahi.
+// js/app.js (UPDATED & MODERNIZED VERSION)
 
 document.addEventListener('DOMContentLoaded', () => {
     // Sirf homepage par chalne wale functions
@@ -10,44 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Yeh function ek post (job, admit card, etc.) ke liye HTML card banata hai.
- * @param {object} item - Backend se aaya hua data object
- * @returns {HTMLElement} - Ek 'div' element jo Swiper slide hai
+ * Yeh function ek post ke liye HTML card banata hai.
+ * NOTE: Iska logic ab 'data-loader.js' mein move ho gaya hai,
+ *       lekin hum isse yahan future use ke liye rakh sakte hain ya hata sakte hain.
+ *       Abhi ke liye yeh use nahi ho raha hai.
  */
-function createListItem(item) {
-    const element = document.createElement('div');
-    element.className = 'swiper-slide bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col p-4';
-    
-    const detailUrl = item.type === 'notification' ? `post.html?slug=${item.slug}` : (item.downloadUrl || item.resultUrl || '#');
-    const title = item.title || item.examName;
-    const organization = item.organization || '';
-    
-    let tag = '';
-    switch (item.type) {
-        case 'notification':
-            tag = '<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Notification</span>';
-            break;
-        case 'admit-card':
-            tag = '<span class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-amber-900 dark:text-amber-300">Admit Card</span>';
-            break;
-        case 'result':
-            tag = '<span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-emerald-900 dark:text-emerald-300">Result</span>';
-            break;
-        case 'answer-key':
-            tag = '<span class="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-rose-900 dark:text-rose-300">Answer Key</span>';
-            break;
-    }
-
-    element.innerHTML = `
-        <div class="flex-grow">
-            <div class="mb-2">${tag}</div>
-            <h3 class="font-bold text-slate-800 dark:text-slate-100">${title}</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">${organization}</p>
-        </div>
-        <a href="${detailUrl}" ${ (item.type !== 'notification') ? 'target="_blank"' : '' } class="mt-4 inline-block font-semibold text-blue-600 hover:underline">View Details →</a>
-    `;
-    return element;
-}
+// function createListItem(item) { ... } // Hum naya createUpdateCard function use karenge
 
 /**
  * Yeh function data load hone se pehle dikhne wale placeholders banata hai.
@@ -70,45 +36,46 @@ function createSkeletonLoader() {
 
 /**
  * Yeh main function hai jo "Latest Updates" section ko data se bharta hai.
+ * (UPDATED to use the new API endpoint)
  */
 async function initUpdatesSwiper() {
     const wrapper = document.getElementById('updates-swiper-wrapper');
     if (!wrapper) return;
+    
+    // Skeleton loader dikhayein
     wrapper.innerHTML = createSkeletonLoader();
 
+    // APNA LIVE RENDER URL YAHAN DAALEIN
+    const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
+
     try {
-        const [jobsRes, admitCardsRes, resultsRes, answerKeysRes] = await Promise.all([
-            fetch(`${API_BASE_URL}/api/jobs?limit=5`),
-            fetch(`${API_BASE_URL}/api/admit-cards?limit=5`),
-            fetch(`${API_BASE_URL}/api/results?limit=5`),
-            fetch(`${API_BASE_URL}/api/answer-keys?limit=5`)
-        ]);
-
-        if (!jobsRes.ok || !admitCardsRes.ok || !resultsRes.ok || !answerKeysRes.ok) throw new Error('One or more API requests failed');
-
-        let { data: jobs } = await jobsRes.json();
-        jobs = jobs.map(item => ({ ...item, type: 'notification' }));
+        const response = await fetch(`${BACKEND_URL}/api/homepage-sections`);
         
-        let { data: admitCards } = await admitCardsRes.json();
-        admitCards = admitCards.map(item => ({ ...item, type: 'admit-card' }));
-        
-        let { data: results } = await resultsRes.json();
-        results = results.map(item => ({ ...item, type: 'result' }));
-        
-        let { data: answerKeys } = await answerKeysRes.json();
-        answerKeys = answerKeys.map(item => ({ ...item, type: 'answer-key' }));
-        
-        const allUpdates = [...jobs, ...admitCards, ...results, ...answerKeys];
-        allUpdates.sort((a, b) => new Date(b.postUpdateDate || b.postDate) - new Date(a.postUpdateDate || a.postDate));
-
-        wrapper.innerHTML = '';
-        if (allUpdates.length === 0) { 
-            wrapper.innerHTML = `<p class="p-4 text-center text-slate-500">No new updates found.</p>`; 
-            return; 
+        if (!response.ok) {
+            throw new Error('API request failed');
         }
-        
-        allUpdates.forEach(item => wrapper.appendChild(createListItem(item)));
 
+        const data = await response.json();
+        
+        // Teeno arrays (ssc, railway, banking) ko ek hi array me mila dein
+        const allPosts = [...(data.ssc || []), ...(data.railway || []), ...(data.banking || [])];
+            
+        // Posts ko date ke hisaab se sort karein, sabse naya post pehle
+        allPosts.sort((a, b) => new Date(b.postDate) - new Date(a.postDate));
+
+        wrapper.innerHTML = ''; // Skeleton loader hatayein
+
+        if (allPosts.length === 0) {
+            wrapper.innerHTML = `<p class="p-4 text-center text-slate-500">No new updates found.</p>`;
+            return;
+        }
+
+        // Har post ke liye naya card banakar append karein
+        allPosts.forEach(post => {
+            wrapper.innerHTML += createUpdateCard(post);
+        });
+
+        // Data load hone ke baad Swiper ko initialize karein
         new Swiper('#updates-swiper', { 
             slidesPerView: 1, 
             spaceBetween: 16, 
@@ -116,8 +83,50 @@ async function initUpdatesSwiper() {
             breakpoints: { 640: { slidesPerView: 2, spaceBetween: 20 }, 1024: { slidesPerView: 3, spaceBetween: 32 } }, 
             autoplay: { delay: 4000, disableOnInteraction: false } 
         });
+
     } catch (error) {
         console.error("Error initializing updates swiper:", error);
         wrapper.innerHTML = `<p class="p-4 text-center text-red-500">Could not load updates. Please check the backend.</p>`;
     }
+}
+
+
+/**
+ * Yeh naya helper function hai jo ek post ke liye HTML card banata hai.
+ * @param {object} post - Naye backend se aaya hua post object
+ * @returns {string} - Swiper slide ka HTML
+ */
+function createUpdateCard(post) {
+    let tagBg = 'bg-blue-500/10 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300';
+    let tagText = 'Notification';
+
+    switch (post.postType) {
+        case 'admit-card':
+            tagText = 'Admit Card';
+            tagBg = 'bg-amber-500/10 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300';
+            break;
+        case 'result':
+            tagText = 'Result';
+            tagBg = 'bg-emerald-500/10 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300';
+            break;
+        case 'answer-key':
+            tagText = 'Answer Key';
+            tagBg = 'bg-rose-500/10 text-rose-800 dark:bg-rose-500/20 dark:text-rose-300';
+            break;
+    }
+
+    const postDate = new Date(post.postDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    return `
+        <div class="swiper-slide">
+            <a href="post.html?slug=${post.slug}" class="card-hover-effect flex flex-col bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg h-full">
+                <div class="flex items-start justify-between mb-4">
+                    <span class="text-xs font-medium px-2 py-1 rounded-full ${tagBg}">${tagText}</span>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">${postDate}</p>
+                </div>
+                <h3 class="font-bold text-lg flex-grow">${post.title}</h3>
+                <span class="font-semibold text-blue-600 mt-4 inline-block">View Details →</span>
+            </a>
+        </div>
+    `;
 }
