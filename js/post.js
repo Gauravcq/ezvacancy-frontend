@@ -1,4 +1,19 @@
-// FRONTEND -> js/post.js (FINAL VERSION with ALL SECTIONS)
+// FILE: ezvacancy-frontend/js/post.js
+
+// This helper function will convert the text from the database into a usable object
+function parseKeyValueString(str) {
+    if (!str || typeof str !== 'string' || str.trim() === '') { return {}; }
+    const obj = {};
+    str.split('\n').forEach(line => {
+        const parts = line.split(':');
+        if (parts.length >= 2) {
+            const key = parts[0].trim();
+            const value = parts.slice(1).join(':').trim();
+            if (key && value) { obj[key] = value; }
+        }
+    });
+    return obj;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
@@ -7,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('post-container');
 
     if (!container || !postSlug) {
-        container.innerHTML = `<h1 class="text-center">Error: Post Not Found</h1>`;
+        if (container) container.innerHTML = `<h1 class="text-center">Error: Post Not Found</h1>`;
         return;
     }
     
@@ -22,22 +37,27 @@ async function fetchPostDetails(slug, container, baseUrl) {
 
         document.title = `${post.title} - EZGOVTJOB`;
 
+        // Parse the text fields from the post object into new objects
+        const importantDatesObj = parseKeyValueString(post.importantDates);
+        const applicationFeeObj = parseKeyValueString(post.applicationFee);
+        const ageLimitObj = parseKeyValueString(post.ageLimit);
+        const vacancyDetailsObj = parseKeyValueString(post.vacancyDetails);
+        const usefulLinksObj = parseKeyValueString(post.usefulLinks);
+
         container.innerHTML = `
             <h1 class="text-center text-3xl font-extrabold text-blue-600 dark:text-blue-400">${post.title}</h1>
             <h2 class="text-center text-xl font-bold mt-2 text-slate-700 dark:text-slate-200">${post.shortInformation || ''}</h2>
             <p class="text-center text-sm text-slate-500 dark:text-slate-400 mt-2"><strong>Post Date:</strong> ${new Date(post.postDate).toLocaleDateString()}</p>
             
-            <!-- 2-COLUMN LAYOUT -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                ${createListSection('Important Dates', post.importantDates)}
-                ${createListSection('Application Fee', post.applicationFee)}
+                ${createListSection('Important Dates', importantDatesObj)}
+                ${createListSection('Application Fee', applicationFeeObj)}
             </div>
 
-            <!-- Full-width sections -->
-            ${createListSection('Age Limit (as on 01/08/2025)', post.ageLimit, true)}
-            ${createVacancyTable('Vacancy Details', post.vacancyDetails)}
+            ${createListSection('Age Limit (as on 01/08/2025)', ageLimitObj, true)}
+            ${createVacancyTable('Vacancy Details', vacancyDetailsObj)}
             ${createHowToApplySection('How to Fill Form', post.howToApply)}
-            ${createLinksSection('Important Links', post.usefulLinks)}
+            ${createLinksSection('Important Links', usefulLinksObj)}
         `;
 
     } catch (error) {
@@ -46,16 +66,13 @@ async function fetchPostDetails(slug, container, baseUrl) {
     }
 }
 
-// Function for bullet-point lists (Dates, Fee, Age Limit)
+// Helper functions to create HTML sections
 function createListSection(title, data, isFullWidth = false) {
     if (!data || Object.keys(data).length === 0) return '';
-    
     const listItems = Object.entries(data).map(([key, value]) => `
         <li class="relative pl-6 before:content-['»'] before:absolute before:left-0 before:font-bold before:text-blue-500"><strong>${key} :</strong> ${value}</li>
     `).join('');
-
     const containerClass = isFullWidth ? 'mt-6' : '';
-
     return `
         <div class="${containerClass}">
             <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
@@ -68,21 +85,18 @@ function createListSection(title, data, isFullWidth = false) {
     `;
 }
 
-// Naya Function: Vacancy Details ke liye proper table banane ke liye
 function createVacancyTable(title, data) {
     if (!data || Object.keys(data).length === 0) return '';
-    
     const rows = Object.entries(data).map(([postName, details]) => {
         const [totalPost, eligibility] = details.split(';').map(s => s.trim());
         return `
             <tr class="border-b border-slate-200 dark:border-slate-700">
                 <td class="p-3">${postName}</td>
-                <td class="p-3 text-center">${totalPost}</td>
-                <td class="p-3">${eligibility}</td>
+                <td class="p-3 text-center">${totalPost || ''}</td>
+                <td class="p-3">${eligibility || ''}</td>
             </tr>
         `;
     }).join('');
-
     return `
         <div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
             <h3 class="text-lg font-bold p-3 bg-slate-100 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-center">${title}</h3>
@@ -104,8 +118,17 @@ function createVacancyTable(title, data) {
     `;
 }
 
-// Function for "How to Apply"
-function createHowToApplySection(title, content) { /* ... iska code wahi rahega ... */ }
+function createHowToApplySection(title, content) {
+    if (!content) return '';
+    return `<div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-lg"> ... </div>`; // Keep your existing code here
+}
 
-// Function for links
-function createLinksSection(title, links) { /* ... iska code wahi rahega ... */ }
+function createLinksSection(title, links) {
+    if (!links || Object.keys(links).length === 0) return '';
+    const linkButtons = Object.entries(links).map(([text, url]) => `
+        <a href="${url}" target="_blank" class="block bg-blue-600 text-white text-center font-semibold py-2.5 rounded-md hover:bg-blue-700 transition-colors">
+            ${text}
+        </a>
+    `).join('');
+    return `<div class="mt-8 bg-blue-50 dark:bg-blue-900/50 p-6 rounded-lg"> ... </div>`; // Keep your existing code here
+}
