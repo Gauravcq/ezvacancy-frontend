@@ -1,62 +1,81 @@
-// js/page-loader.js (Final Version - List Pages ke liye)
+// js/page-loader.js (NEW & DYNAMIC VERSION)
 
-// Note: API_BASE_URL ab 'main.js' se aa raha hai, isliye yahan zaroorat nahi.
+document.addEventListener('DOMContentLoaded', () => {
+    // APNA LIVE RENDER URL YAHAN DAALEIN
+    const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
+    const postsContainer = document.getElementById('posts-container');
+    const pageTitleElement = document.querySelector('h1');
 
-function createPageListItem(item, type) {
-    const element = document.createElement('div');
-    element.className = 'bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col p-4 card-hover-effect';
-    
-    const detailUrl = (type === 'Notification') ? `post.html?slug=${item.slug}` : (item.downloadUrl || item.resultUrl || '#');
-    const title = item.title || item.examName;
-    const organization = item.organization || '';
-    
-    let tag = '';
-    if (type === 'Notification') tag = '<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Notification</span>';
-    if (type === 'Admit Card') tag = '<span class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-amber-900 dark:text-amber-300">Admit Card</span>';
-    if (type === 'Result') tag = '<span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-emerald-900 dark:text-emerald-300">Result</span>';
-    if (type === 'Answer Key') tag = '<span class="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-rose-900 dark:text-rose-300">Answer Key</span>';
+    if (!postsContainer || !pageTitleElement) {
+        console.error('Required elements (posts-container or h1) not found.');
+        return;
+    }
 
-    element.innerHTML = `
-        <div class="flex-grow">
-            <div class="mb-2">${tag}</div>
-            <h3 class="font-bold text-slate-800 dark:text-slate-100">${title}</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">${organization}</p>
-        </div>
-        <a href="${detailUrl}" ${ (type !== 'Notification') ? 'target="_blank"' : '' } class="mt-4 inline-block font-semibold text-blue-600 hover:underline">View Details →</a>
-    `;
-    return element;
-}
+    // Pata lagao ki hum kis page par hain (e.g., notifications.html)
+    const currentPage = window.location.pathname.split('/').pop();
+    let postType = '';
 
-async function loadPageData(endpoint, type) {
-    const container = document.getElementById('posts-container');
-    if (!container) return;
-    
-    let skeletonHTML = '';
-    for (let i = 0; i < 6; i++) {
-        skeletonHTML += `
-            <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4 animate-pulse">
-                <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/4 mb-3"></div>
-                <div class="h-5 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-2"></div>
-                <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
-                <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3 mt-4"></div>
-            </div>
+    // Page ke hisaab se postType set karo
+    switch (currentPage) {
+        case 'notifications.html':
+            postType = 'notification';
+            break;
+        case 'admit-cards.html':
+            postType = 'admit-card';
+            break;
+        case 'results.html':
+            postType = 'result';
+            break;
+        case 'answer-keys.html':
+            postType = 'answer-key';
+            break;
+        case 'syllabus.html':
+            postType = 'syllabus';
+            break;
+        default:
+            // Agar koi page match nahi hota, to kuch mat karo
+            return; 
+    }
+
+    // Loading indicator
+    postsContainer.innerHTML = '<p class="text-slate-500">Loading posts...</p>';
+
+    // --- Helper function to create a single post card ---
+    function createPostCard(post) {
+        const postDate = new Date(post.postDate).toLocaleDateString('en-GB', {
+            day: '2-digit', month: 'short', year: 'numeric'
+        });
+
+        return `
+            <a href="post.html?slug=${post.slug}" class="card-hover-effect block bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md">
+                <div class="flex-grow">
+                    <h3 class="font-bold text-lg mb-2">${post.title}</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
+                        Category: ${post.SubCategory?.Category?.name || 'N/A'} > ${post.SubCategory?.name || 'N/A'}
+                    </p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        Posted on: ${postDate}
+                    </p>
+                </div>
+                <span class="font-semibold text-blue-600 mt-4 inline-block">Read More →</span>
+            </a>
         `;
     }
-    container.innerHTML = skeletonHTML;
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/${endpoint}?limit=50`); 
-        if (!response.ok) throw new Error('API request failed');
-        const { data } = await response.json();
-        
-        container.innerHTML = '';
-        if (data.length === 0) { 
-            container.innerHTML = `<p class="md:col-span-3 text-center">No ${type.toLowerCase()}s found currently.</p>`; 
-            return; 
-        }
-        data.forEach(item => container.appendChild(createPageListItem(item, type)));
-    } catch (error) {
-        console.error(`Error loading page data for ${endpoint}:`, error);
-        container.innerHTML = `<p class="md:col-span-3 text-center text-red-500">Could not load data. Please try again later.</p>`;
-    }
-}
+    
+    // BACKEND API BANANA BAAKI HAI! Yeh API abhi chalega nahi.
+    // Hum ek aisa API banayenge jo postType se filter karega.
+    fetch(`${BACKEND_URL}/api/posts/type/${postType}`)
+        .then(response => response.json())
+        .then(posts => {
+            if (!posts || posts.length === 0) {
+                postsContainer.innerHTML = '<p class="text-slate-500">No posts found for this category.</p>';
+                return;
+            }
+            // Saare cards ko container me daalo
+            postsContainer.innerHTML = posts.map(createPostCard).join('');
+        })
+        .catch(error => {
+            console.error('Error fetching posts:', error);
+            postsContainer.innerHTML = '<p class="text-red-500">Failed to load posts. Please try again.</p>';
+        });
+});
