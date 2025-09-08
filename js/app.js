@@ -1,24 +1,11 @@
-// js/app.js (UPDATED & MODERNIZED VERSION)
+// FILE: ezvacancy-frontend/js/app.js (Simplified Version)
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Sirf homepage par chalne wale functions
     if (document.getElementById('updates-swiper-wrapper')) {
         initUpdatesSwiper();
     }
 });
 
-/**
- * Yeh function ek post ke liye HTML card banata hai.
- * NOTE: Iska logic ab 'data-loader.js' mein move ho gaya hai,
- *       lekin hum isse yahan future use ke liye rakh sakte hain ya hata sakte hain.
- *       Abhi ke liye yeh use nahi ho raha hai.
- */
-// function createListItem(item) { ... } // Hum naya createUpdateCard function use karenge
-
-/**
- * Yeh function data load hone se pehle dikhne wale placeholders banata hai.
- * @returns {string} - Skeleton loaders ka HTML
- */
 function createSkeletonLoader() {
     let skeletonHTML = '';
     for (let i = 0; i < 3; i++) {
@@ -34,53 +21,39 @@ function createSkeletonLoader() {
     return skeletonHTML;
 }
 
-/**
- * Yeh main function hai jo "Latest Updates" section ko data se bharta hai.
- * (UPDATED to use the new API endpoint)
- */
 async function initUpdatesSwiper() {
     const wrapper = document.getElementById('updates-swiper-wrapper');
     if (!wrapper) return;
     
-    // Skeleton loader dikhayein
     wrapper.innerHTML = createSkeletonLoader();
 
-    // APNA LIVE RENDER URL YAHAN DAALEIN
     const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
 
     try {
         const response = await fetch(`${BACKEND_URL}/api/homepage-sections`);
-        
-        if (!response.ok) {
-            throw new Error('API request failed');
-        }
-
+        if (!response.ok) throw new Error('API request failed');
         const data = await response.json();
         
-        // Teeno arrays (ssc, railway, banking) ko ek hi array me mila dein
         const allPosts = [...(data.ssc || []), ...(data.railway || []), ...(data.banking || [])];
-            
-        // Posts ko date ke hisaab se sort karein, sabse naya post pehle
         allPosts.sort((a, b) => new Date(b.postDate) - new Date(a.postDate));
 
-        wrapper.innerHTML = ''; // Skeleton loader hatayein
+        wrapper.innerHTML = '';
 
         if (allPosts.length === 0) {
             wrapper.innerHTML = `<p class="p-4 text-center text-slate-500">No new updates found.</p>`;
             return;
         }
 
-        // Har post ke liye naya card banakar append karein
+        // The data is already in the correct format, no parsing needed here!
         allPosts.forEach(post => {
             wrapper.innerHTML += createUpdateCard(post);
         });
 
-        // Data load hone ke baad Swiper ko initialize karein
         new Swiper('#updates-swiper', { 
             slidesPerView: 1, 
             spaceBetween: 16, 
             pagination: { el: '.swiper-pagination', clickable: true }, 
-            breakpoints: { 640: { slidesPerView: 2, spaceBetween: 20 }, 1024: { slidesPerView: 3, spaceBetween: 32 } }, 
+            breakpoints: { 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3, spaceBetween: 32 } }, 
             autoplay: { delay: 4000, disableOnInteraction: false } 
         });
 
@@ -90,12 +63,6 @@ async function initUpdatesSwiper() {
     }
 }
 
-
-/**
- * Yeh naya helper function hai jo ek post ke liye HTML card banata hai.
- * @param {object} post - Naye backend se aaya hua post object
- * @returns {string} - Swiper slide ka HTML
- */
 function createUpdateCard(post) {
     let tagBg = 'bg-blue-500/10 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300';
     let tagText = 'Notification';

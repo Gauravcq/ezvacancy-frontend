@@ -1,19 +1,4 @@
-// FILE: ezvacancy-frontend/js/post.js
-
-// This helper function will convert the text from the database into a usable object
-function parseKeyValueString(str) {
-    if (!str || typeof str !== 'string' || str.trim() === '') { return {}; }
-    const obj = {};
-    str.split('\n').forEach(line => {
-        const parts = line.split(':');
-        if (parts.length >= 2) {
-            const key = parts[0].trim();
-            const value = parts.slice(1).join(':').trim();
-            if (key && value) { obj[key] = value; }
-        }
-    });
-    return obj;
-}
+// FILE: ezvacancy-frontend/js/post.js (Simplified Version)
 
 document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
@@ -33,31 +18,25 @@ async function fetchPostDetails(slug, container, baseUrl) {
     try {
         const response = await fetch(`${baseUrl}/api/posts/${slug}`);
         if (!response.ok) throw new Error('Post not found');
-        const post = await response.json();
+        const post = await response.json(); // post.importantDates is now an OBJECT, not a string
 
         document.title = `${post.title} - EZGOVTJOB`;
 
-        // Parse the text fields from the post object into new objects
-        const importantDatesObj = parseKeyValueString(post.importantDates);
-        const applicationFeeObj = parseKeyValueString(post.applicationFee);
-        const ageLimitObj = parseKeyValueString(post.ageLimit);
-        const vacancyDetailsObj = parseKeyValueString(post.vacancyDetails);
-        const usefulLinksObj = parseKeyValueString(post.usefulLinks);
-
+        // We no longer need to parse anything! We use the objects directly.
         container.innerHTML = `
             <h1 class="text-center text-3xl font-extrabold text-blue-600 dark:text-blue-400">${post.title}</h1>
             <h2 class="text-center text-xl font-bold mt-2 text-slate-700 dark:text-slate-200">${post.shortInformation || ''}</h2>
             <p class="text-center text-sm text-slate-500 dark:text-slate-400 mt-2"><strong>Post Date:</strong> ${new Date(post.postDate).toLocaleDateString()}</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                ${createListSection('Important Dates', importantDatesObj)}
-                ${createListSection('Application Fee', applicationFeeObj)}
+                ${createListSection('Important Dates', post.importantDates)}
+                ${createListSection('Application Fee', post.applicationFee)}
             </div>
 
-            ${createListSection('Age Limit (as on 01/08/2025)', ageLimitObj, true)}
-            ${createVacancyTable('Vacancy Details', vacancyDetailsObj)}
+            ${createListSection('Age Limit (as on 01/08/2025)', post.ageLimit, true)}
+            ${createVacancyTable('Vacancy Details', post.vacancyDetails)}
             ${createHowToApplySection('How to Fill Form', post.howToApply)}
-            ${createLinksSection('Important Links', usefulLinksObj)}
+            ${createLinksSection('Important Links', post.usefulLinks)}
         `;
 
     } catch (error) {
@@ -66,7 +45,15 @@ async function fetchPostDetails(slug, container, baseUrl) {
     }
 }
 
-// Helper functions to create HTML sections
+// All helper functions (createListSection, createVacancyTable, etc.) remain exactly the same.
+function createListSection(title, data, isFullWidth = false) { /* ... NO CHANGE ... */ }
+function createVacancyTable(title, data) { /* ... NO CHANGE ... */ }
+function createHowToApplySection(title, content) { /* ... NO CHANGE ... */ }
+function createLinksSection(title, links) { /* ... NO CHANGE ... */ }
+
+// --- PASTE THE HELPER FUNCTIONS FROM YOUR EXISTING FILE HERE ---
+// Or use these corrected versions:
+
 function createListSection(title, data, isFullWidth = false) {
     if (!data || Object.keys(data).length === 0) return '';
     const listItems = Object.entries(data).map(([key, value]) => `
@@ -88,7 +75,7 @@ function createListSection(title, data, isFullWidth = false) {
 function createVacancyTable(title, data) {
     if (!data || Object.keys(data).length === 0) return '';
     const rows = Object.entries(data).map(([postName, details]) => {
-        const [totalPost, eligibility] = details.split(';').map(s => s.trim());
+        const [totalPost, eligibility] = String(details).split(';').map(s => s.trim());
         return `
             <tr class="border-b border-slate-200 dark:border-slate-700">
                 <td class="p-3">${postName}</td>
@@ -120,7 +107,14 @@ function createVacancyTable(title, data) {
 
 function createHowToApplySection(title, content) {
     if (!content) return '';
-    return `<div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-lg"> ... </div>`; // Keep your existing code here
+    return `
+        <div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <h3 class="text-lg font-bold p-3 bg-slate-100 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-center">${title}</h3>
+            <div class="p-4 prose dark:prose-invert max-w-none">
+                ${content.replace(/\n/g, '<br>')}
+            </div>
+        </div>
+    `;
 }
 
 function createLinksSection(title, links) {
@@ -130,5 +124,12 @@ function createLinksSection(title, links) {
             ${text}
         </a>
     `).join('');
-    return `<div class="mt-8 bg-blue-50 dark:bg-blue-900/50 p-6 rounded-lg"> ... </div>`; // Keep your existing code here
+    return `
+        <div class="mt-8 bg-blue-50 dark:bg-blue-900/50 p-6 rounded-lg">
+            <h3 class="text-xl font-bold text-center mb-4">${title}</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                ${linkButtons}
+            </div>
+        </div>
+    `;
 }
