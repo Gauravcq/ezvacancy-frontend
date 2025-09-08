@@ -1,13 +1,7 @@
-// js/page-loader.js (Final Version for List Pages)
+// js/page-loader.js (Final Version - List Pages ke liye)
 
-// Note: API_BASE_URL is not needed here because it's already in main.js
+// Note: API_BASE_URL ab 'main.js' se aa raha hai, isliye yahan zaroorat nahi.
 
-/**
- * Creates a card for an item on a list page.
- * @param {object} item - The data object from the backend.
- * @param {string} type - The type of item ('Notification', 'Admit Card', etc.).
- * @returns {HTMLElement} - A div element representing the card.
- */
 function createPageListItem(item, type) {
     const element = document.createElement('div');
     element.className = 'bg-white dark:bg-slate-800 rounded-lg shadow-md flex flex-col p-4 card-hover-effect';
@@ -33,16 +27,10 @@ function createPageListItem(item, type) {
     return element;
 }
 
-/**
- * The main function that loads all items for a list page (like notifications.html).
- * @param {string} endpoint - The API endpoint to fetch data from (e.g., 'jobs', 'admit-cards').
- * @param {string} type - The user-friendly name for the item type (e.g., 'Notification', 'Admit Card').
- */
 async function loadPageData(endpoint, type) {
     const container = document.getElementById('posts-container');
     if (!container) return;
     
-    // Show skeleton loaders while fetching data
     let skeletonHTML = '';
     for (let i = 0; i < 6; i++) {
         skeletonHTML += `
@@ -59,17 +47,14 @@ async function loadPageData(endpoint, type) {
     try {
         const response = await fetch(`${API_BASE_URL}/api/${endpoint}?limit=50`); 
         if (!response.ok) throw new Error('API request failed');
-        
         const { data } = await response.json();
         
-        container.innerHTML = ''; // Clear skeletons
+        container.innerHTML = '';
         if (data.length === 0) { 
-            container.innerHTML = `<p class="md:col-span-3 text-center text-slate-500">No ${type.toLowerCase()}s found currently.</p>`; 
+            container.innerHTML = `<p class="md:col-span-3 text-center">No ${type.toLowerCase()}s found currently.</p>`; 
             return; 
         }
-
         data.forEach(item => container.appendChild(createPageListItem(item, type)));
-
     } catch (error) {
         console.error(`Error loading page data for ${endpoint}:`, error);
         container.innerHTML = `<p class="md:col-span-3 text-center text-red-500">Could not load data. Please try again later.</p>`;

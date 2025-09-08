@@ -1,7 +1,7 @@
 // js/post.js (Final and Complete Version)
 
 // Note: API_BASE_URL is not needed here because it's already in main.js
-// Note: initializeCommonFeatures is called automatically from main.js
+// Note: initTheme is also not needed here because it's already in main.js
 
 document.addEventListener('DOMContentLoaded', () => {
     // Get the 'slug' from the URL (e.g., from ?slug=ssc-cgl-2024)

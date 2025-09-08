@@ -1,55 +1,72 @@
 <!doctype html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <title>All Notifications - EZGOVTJOB</title>
-    <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EZGOVTJOB — Your Ultimate Guide to Government Jobs</title>
-  <meta name="description" content="EZGOVTJOB: Your trusted source for the latest government job notifications, admit cards, results, and expert preparation tools." />
+  <title>All Notifications - EZGOVTJOB</title>
+  <meta name="description" content="Browse all the latest government job notifications and updates." />
   <meta name="theme-color" content="#2563eb" />
   <link rel="icon" href="images/logo.png" /><link rel="apple-touch-icon" href="images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
-  <style>.glass{background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.dark .glass{background:rgba(15,23,42,0.6)}.card-hover-effect{@apply transition-all duration-300 ease-in-out}.card-hover-effect:hover{@apply -translate-y-2 shadow-2xl}.swiper-pagination-bullet{background:#94a3b8 !important;}.swiper-pagination-bullet-active{background:#2563eb !important;}</style>
+  <style>.glass{background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.dark .glass{background:rgba(15,23,42,0.6)}.card-hover-effect{@apply transition-all duration-300 ease-in-out}.card-hover-effect:hover{@apply -translate-y-1 shadow-lg}</style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-900 font-sans">
-    <header class="sticky top-0 z-50 glass shadow-sm border-b border-white/20 dark:border-slate-800">
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans">
+<!-- Pura Naya aur Final Header (Sabhi HTML files ke liye) -->
+<!-- Pura Naya aur Final Header (Sabhi HTML files ke liye) -->
+<!-- Pura Naya aur Final Header (Sabhi HTML files ke liye) -->
+<header class="sticky top-0 z-50 glass shadow-sm border-b border-white/20 dark:border-slate-800">
     <div class="mx-auto max-w-7xl px-4 py-3 flex items-center">
       <a href="/" class="flex items-center gap-3"><img src="images/logo.png" alt="EZGOVTJOB Logo" class="h-9 w-9 rounded-full object-cover"><span class="text-lg font-bold">EZGOVTJOB</span></a>
+      
+      <!-- Desktop Nav -->
       <nav class="hidden md:flex ml-8 gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
-        <a class="hover:text-blue-600 text-blue-600 font-semibold" href="/">Home</a>
+        <a class="hover:text-blue-600" href="/">Home</a>
         <a class="hover:text-blue-600" href="notifications.html">Notifications</a>
         <a class="hover:text-blue-600" href="admit-cards.html">Admit Cards</a>
         <a class="hover:text-blue-600" href="results.html">Results</a>
         <a class="hover:text-blue-600" href="answer-keys.html">Answer Keys</a>
-        <a class="hover:text-blue-600" href="syllabus.html">Syllabus</a>
+        <a class="hover:text-blue-600" href="syllabus.html">Syllabus</a> <!-- YEH NAYA LINK -->
       </nav>
-      <div class="flex items-center gap-2 ml-auto"><button id="themeToggle" class="rounded-lg border border-slate-200 dark:border-slate-700 p-2"><svg id="theme-icon-light" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><svg id="theme-icon-dark" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg></button><button id="hamburger-btn" class="md:hidden rounded-lg border border-slate-200 dark:border-slate-700 p-2"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg></button></div>
+
+      <div class="flex items-center gap-2 ml-auto">
+        <button id="themeToggle" class="rounded-lg border border-slate-200 dark:border-slate-700 p-2"><svg id="theme-icon-light" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><svg id="theme-icon-dark" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg></button>
+        <!-- Hamburger Button -->
+        <button id="hamburger-btn" class="md:hidden rounded-lg border border-slate-200 dark:border-slate-700 p-2">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+      </div>
     </div>
-    <div id="mobile-nav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 px-4 pb-3"><nav class="grid gap-2 text-sm py-3"><a class="hover:text-blue-600 p-2 rounded" href="/">Home</a><a class="hover:text-blue-600 p-2 rounded" href="notifications.html">Notifications</a><a class="hover:text-blue-600 p-2 rounded" href="admit-cards.html">Admit Cards</a><a class="hover:text-blue-600 p-2 rounded" href="results.html">Results</a><a class="hover:text-blue-600 p-2 rounded" href="answer-keys.html">Answer Keys</a><a class="hover:text-blue-600 p-2 rounded" href="syllabus.html">Syllabus</a></nav></div>
-  </header>
-
-    <main id="main" class="mx-auto max-w-7xl px-4 py-10">
-        <h1 class="text-3xl font-bold mb-8">All Notifications (Jobs)</h1>
-        <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- JavaScript yahan saare posts daalega -->
-        </div>
-    </main>
     
-   <footer class="bg-slate-800 dark:bg-black text-slate-300 py-16"><div class="mx-auto max-w-7xl px-4"><div class="grid grid-cols-1 md:grid-cols-4 gap-12"><div class="md:col-span-1"><a href="/" class="flex items-center gap-3"><img src="images/logo.png" alt="EZGOVTJOB Logo" class="h-9 w-9 rounded-full object-cover"><span class="text-lg font-bold text-white">EZGOVTJOB</span></a><p class="mt-4 text-sm text-slate-400">Your trusted partner in government exam preparations.</p></div><div><h3 class="font-semibold text-white">Platforms</h3><ul class="mt-4 space-y-2 text-sm"><li><a href="https://e.eztyping.in/" target="_blank" class="text-slate-400 hover:text-white">EzTyping Platform</a></li><li><a href="#" class="text-slate-400 hover:text-white">EzIBPS Platform</a></li><li><a href="#" class="text-slate-400 hover:text-white">Android App</a></li></ul></div><div><h3 class="font-semibold text-white">Community</h3><ul class="mt-4 space-y-2 text-sm"><li><a href="https://t.me/EzSSC" target="_blank" class="text-slate-400 hover:text-white">EzSSC Official</a></li><li><a href="https://t.me/EzIBPS" target="_blank" class="text-slate-400 hover:text-white">EzIBPS Channel</a></li><li><a href="https://t.me/sscrankers" target="_blank" class="text-slate-400 hover:text-white">SSC Rankers</a></li></ul></div><div><h3 class="font-semibold text-white">Tools & Resources</h3><ul class="mt-4 space-y-2 text-sm"><li><a href="https://www.examranks.com/" target="_blank" class="text-slate-400 hover:text-white">Rank Predictor</a></li><li><a href="https://linktr.ee/ezssc" target="_blank" class="text-slate-400 hover:text-white">All Links (Linktree)</a></li></ul></div></div><div class="mt-12 border-t border-slate-700 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500"><p>© <span id="year"></span> EZGOVTJOB. All Rights Reserved.</p><div class="flex space-x-4 mt-4 sm:mt-0"><a href="https://t.me/EzSSC" target="_blank" class="hover:text-white"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 2H2L7.333 12.167L2 22h20l-5.333-9.833L22 2zm-3.333 18H5.333L9.5 13.5L18.667 20z"/></svg></a><a href="https://www.youtube.com/@EzSSC" target="_blank" class="hover:text-white"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></div></div></div>
-  </footer>
-
-    <!-- Final Scripts -->
+    <!-- Mobile Nav -->
+    <div id="mobile-nav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 px-4 pb-3">
+        <nav class="grid gap-2 text-sm py-3">
+            <a class="hover:text-blue-600 p-2 rounded" href="/">Home</a>
+            <a class="hover:text-blue-600 p-2 rounded" href="notifications.html">Notifications</a>
+            <a class="hover:text-blue-600 p-2 rounded" href="admit-cards.html">Admit Cards</a>
+            <a class="hover:text-blue-600 p-2 rounded" href="results.html">Results</a>
+            <a class="hover:text-blue-600 p-2 rounded" href="answer-keys.html">Answer Keys</a>
+            <a class="hover:text-blue-600 p-2 rounded" href="syllabus.html">Syllabus</a> <!-- YEH NAYA LINK -->
+        </nav>
+    </div>
+</header>
+  <main id="main" class="mx-auto max-w-7xl px-4 py-10">
+    <h1 class="text-3xl font-bold mb-8">All Notifications (Jobs)</h1>
+    <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- JavaScript yahan saare posts daalega -->
+    </div>
+  </main>
+    
+  <footer class="bg-slate-800 dark:bg-black text-slate-300 py-16"><div class="mx-auto max-w-7xl px-4"><div class="grid grid-cols-1 md:grid-cols-4 gap-12"><div class="md:col-span-1"><a href="/" class="flex items-center gap-3"><img src="images/logo.png" alt="EZGOVTJOB Logo" class="h-9 w-9 rounded-full object-cover"><span class="text-lg font-bold text-white">EZGOVTJOB</span></a><p class="mt-4 text-sm text-slate-400">Your trusted partner in government exam preparations.</p></div><div><h3 class="font-semibold text-white">Platforms</h3><ul class="mt-4 space-y-2 text-sm"><li><a href="https://e.eztyping.in/" target="_blank" class="text-slate-400 hover:text-white">EzTyping Platform</a></li><li><a href="#" class="text-slate-400 hover:text-white">EzIBPS Platform</a></li><li><a href="#" class="text-slate-400 hover:text-white">Android App</a></li></ul></div><div><h3 class="font-semibold text-white">Community</h3><ul class="mt-4 space-y-2 text-sm"><li><a href="https://t.me/EzSSC" target="_blank" class="text-slate-400 hover:text-white">EzSSC Official</a></li><li><a href="https://t.me/EzIBPS" target="_blank" class="text-slate-400 hover:text-white">EzIBPS Channel</a></li><li><a href="https://t.me/sscrankers" target="_blank" class="text-slate-400 hover:text-white">SSC Rankers</a></li></ul></div><div><h3 class="font-semibold text-white">Tools & Resources</h3><ul class="mt-4 space-y-2 text-sm"><li><a href="https://www.examranks.com/" target="_blank" class="text-slate-400 hover:text-white">Rank Predictor</a></li><li><a href="https://linktr.ee/ezssc" target="_blank" class="text-slate-400 hover:text-white">All Links (Linktree)</a></li></ul></div></div><div class="mt-12 border-t border-slate-700 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500"><p>© <span id="year"></span> EZGOVTJOB. All Rights Reserved.</p><div class="flex space-x-4 mt-4 sm:mt-0"><a href="https://t.me/EzSSC" target="_blank" class="hover:text-white"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 2H2L7.333 12.167L2 22h20l-5.333-9.833L22 2zm-3.333 18H5.333L9.5 13.5L18.667 20z"/></svg></a><a href="https://www.youtube.com/@EzSSC" target="_blank" class="hover:text-white"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></div></div></div></footer>
+    
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="./js/app.js"></script>
     <script src="./js/page-loader.js"></script>
+     <script src="./js/main.js"></script> <!-- Master file pehle -->
     <script>
-        document.body.dataset.page = 'list-page';
-        document.body.dataset.endpoint = 'jobs';
-        document.body.dataset.type = 'Notification';
+        // Page ko batao ki 'jobs' endpoint se data laakar 'Notification' type ke card banao
+        loadPageData('jobs', 'Notification');
     </script>
 </body>
 </html>
