@@ -55,14 +55,16 @@
 <main id="main" class="mx-auto max-w-7xl px-4 py-10">
     <h1 id="category-title" class="text-3xl font-bold mb-4">Loading...</h1>
     
-    <!-- === YEH NAYA FILTER BAR ADD KAREIN === -->
-    <div id="filter-bar" class="mb-8 flex flex-wrap gap-2">
-        <!-- JS yahan sub-category ke buttons daalega -->
-        <div class="bg-slate-200 dark:bg-slate-700 h-8 w-24 rounded animate-pulse"></div>
-        <div class="bg-slate-200 dark:bg-slate-700 h-8 w-20 rounded animate-pulse"></div>
-        <div class="bg-slate-200 dark:bg-slate-700 h-8 w-28 rounded animate-pulse"></div>
+
+    <!-- === YEH NAYA FILTER DROPDOWN ADD KAREIN === -->
+    <div id="filter-container" class="mb-8 max-w-xs">
+        <label for="subcategory-select" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Filter by Exam:</label>
+        <select id="subcategory-select" class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <!-- JS yahan options daalega -->
+            <option>Loading filters...</option>
+        </select>
     </div>
-    <!-- === END OF FILTER BAR === -->
+    <!-- === END OF FILTER DROPDOWN === -->
     
     <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- JavaScript yahan posts daalega -->

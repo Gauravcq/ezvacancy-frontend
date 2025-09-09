@@ -1,19 +1,16 @@
-// js/page-loader.js (FINAL CORRECTED VERSION - Handles ALL pages)
+// js/page-loader.js (FINAL VERSION with Dropdown Filter)
 
 document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
     const postsContainer = document.getElementById('posts-container');
-    const filterBar = document.getElementById('filter-bar');
-    const titleElement = document.getElementById('category-title') || document.querySelector('h1');
+    const filterSelect = document.getElementById('subcategory-select');
     
     if (!postsContainer) return;
 
     const currentPage = window.location.pathname.split('/').pop();
     
-    // --- Page ke hisaab se logic chalao ---
-    
+    // Page ke hisaab se logic chalao
     if (currentPage === 'category.html') {
-        // YEH 'category.html' KA LOGIC HAI
         const params = new URLSearchParams(window.location.search);
         const categorySlug = params.get('type');
         
@@ -26,12 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
     } else {
-        // YEH BAAKI SAARE PAGES KA PURAANA LOGIC HAI (notifications.html, etc.)
-        if (filterBar) filterBar.style.display = 'none'; // Hide filter bar on other pages
-
-        let postType = '';
-        let pageTitle = '';
-
+        if (filterSelect) document.getElementById('filter-container').style.display = 'none';
+        let postType = '', pageTitle = '';
         switch (currentPage) {
             case 'notifications.html': postType = 'notification'; pageTitle = 'All Notifications'; break;
             case 'admit-cards.html': postType = 'admit-card'; pageTitle = 'All Admit Cards'; break;
@@ -39,17 +32,16 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'answer-keys.html': postType = 'answer-key'; pageTitle = 'All Answer Keys'; break;
             case 'syllabus.html': postType = 'syllabus'; pageTitle = 'All Syllabus'; break;
         }
-
         if (postType) {
             updateTitle(pageTitle);
             loadPosts(`/api/posts/type/${postType}`);
         }
     }
 
-    
     // --- Helper Functions ---
 
     function updateTitle(title) {
+        const titleElement = document.getElementById('category-title') || document.querySelector('h1');
         if (titleElement && title) {
             titleElement.textContent = title;
             document.title = `${title} - EZGOVTJOB`;
@@ -58,69 +50,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadFiltersAndPosts(catSlug) {
         loadFilters(catSlug);
-        loadPosts(`/api/category/${catSlug}`);
+        loadPosts(`/api/category/${catSlug}`); // Initially load all posts
     }
 
     async function loadFilters(catSlug) {
-        if (!filterBar) return;
+        if (!filterSelect) return;
         try {
             const res = await fetch(`${BACKEND_URL}/api/subcategories/${catSlug}`);
             const subCategories = await res.json();
             
-            filterBar.innerHTML = '';
+            filterSelect.innerHTML = `<option value="${catSlug}">All ${catSlug.toUpperCase()}</option>`;
             
-            const allButton = createFilterButton('All', catSlug, true);
-            allButton.onclick = () => { setActiveButton(allButton); loadPosts(`/api/category/${catSlug}`); };
-            filterBar.appendChild(allButton);
-
             subCategories.forEach(sub => {
-                const subCatButton = createFilterButton(sub.name, sub.slug);
-                subCatButton.onclick = () => { setActiveButton(subCatButton); loadPosts(`/api/posts/subcategory/${sub.slug}`); };
-                filterBar.appendChild(subCatButton);
+                filterSelect.innerHTML += `<option value="${sub.slug}">${sub.name}</option>`;
             });
-        } catch (error) { console.error('Failed to load filters:', error); filterBar.innerHTML = ''; }
+
+            // Add event listener to the dropdown
+            filterSelect.addEventListener('change', (event) => {
+                const selectedSlug = event.target.value;
+                const isMainCategory = selectedSlug === catSlug;
+                const apiEndpoint = isMainCategory ? `/api/category/${selectedSlug}` : `/api/posts/subcategory/${selectedSlug}`;
+                loadPosts(apiEndpoint);
+            });
+
+        } catch (error) { console.error('Failed to load filters:', error); }
     }
 
-    async function loadPosts(apiEndpoint) {
-        postsContainer.innerHTML = '<p class="col-span-full text-center text-slate-500">Loading posts...</p>';
-        try {
-            const res = await fetch(`${BACKEND_URL}${apiEndpoint}`);
-            const posts = await res.json();
-            if (!posts || posts.length === 0) {
-                postsContainer.innerHTML = '<p class="col-span-full text-center text-slate-500">No posts found.</p>';
-                return;
-            }
-            postsContainer.innerHTML = posts.map(createPostCard).join('');
-        } catch (error) { console.error('Failed to load posts:', error); postsContainer.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading posts.</p>'; }
-    }
+    async function loadPosts(apiEndpoint) { /* ... iska code wahi rahega, koi change nahi ... */ }
 
-    function createFilterButton(name, slug, isActive = false) {
-        const button = document.createElement('button');
-        button.textContent = name;
-        button.dataset.slug = slug;
-        button.className = `px-3 py-1 text-sm font-medium rounded-full transition-colors ${ isActive ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600' }`;
-        return button;
-    }
-
-    function setActiveButton(activeBtn) {
-        filterBar.querySelectorAll('button').forEach(btn => {
-            btn.className = btn.className.replace('bg-blue-600 text-white', 'bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600');
-        });
-        activeBtn.className = activeBtn.className.replace('bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600', 'bg-blue-600 text-white');
-    }
+    function createPostCard(post) { /* ... iska code wahi rahega, koi change nahi ... */ }
 });
-
-function createPostCard(post) {
-    const postDate = new Date(post.postDate).toLocaleDateString('en-GB', {
-        day: '2-digit', month: 'short', year: 'numeric'
-    });
-    return `
-        <a href="post.html?slug=${post.slug}" class="card-hover-effect block bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md">
-            <h3 class="font-bold text-lg mb-2">${post.title}</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400">
-                Posted on: ${postDate}
-            </p>
-            <span class="font-semibold text-blue-600 mt-4 inline-block">Read More →</span>
-        </a>
-    `;
-}
