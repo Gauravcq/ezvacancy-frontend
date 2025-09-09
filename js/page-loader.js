@@ -1,4 +1,4 @@
-// js/page-loader.js (FINAL VERSION with Dropdown Filter)
+// js/page-loader.js (FINAL, COMPLETE VERSION with Dropdown and all functions)
 
 document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterSelect.innerHTML += `<option value="${sub.slug}">${sub.name}</option>`;
             });
 
-            // Add event listener to the dropdown
             filterSelect.addEventListener('change', (event) => {
                 const selectedSlug = event.target.value;
                 const isMainCategory = selectedSlug === catSlug;
@@ -76,7 +75,36 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error('Failed to load filters:', error); }
     }
 
-    async function loadPosts(apiEndpoint) { /* ... iska code wahi rahega, koi change nahi ... */ }
+    // --- YEH FUNCTION AB POORA HAI ---
+    async function loadPosts(apiEndpoint) {
+        postsContainer.innerHTML = '<p class="col-span-full text-center text-slate-500">Loading posts...</p>';
+        try {
+            const res = await fetch(`${BACKEND_URL}${apiEndpoint}`);
+            const posts = await res.json();
+            if (!posts || posts.length === 0) {
+                postsContainer.innerHTML = '<p class="col-span-full text-center text-slate-500">No posts found.</p>';
+                return;
+            }
+            postsContainer.innerHTML = posts.map(createPostCard).join('');
+        } catch (error) { 
+            console.error('Failed to load posts:', error); 
+            postsContainer.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading posts.</p>'; 
+        }
+    }
 
-    function createPostCard(post) { /* ... iska code wahi rahega, koi change nahi ... */ }
+    // --- YEH FUNCTION BHI AB POORA HAI ---
+    function createPostCard(post) {
+        const postDate = new Date(post.postDate).toLocaleDateString('en-GB', {
+            day: '2-digit', month: 'short', year: 'numeric'
+        });
+        return `
+            <a href="post.html?slug=${post.slug}" class="card-hover-effect block bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md">
+                <h3 class="font-bold text-lg mb-2">${post.title}</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Posted on: ${postDate}
+                </p>
+                <span class="font-semibold text-blue-600 mt-4 inline-block">Read More →</span>
+            </a>
+        `;
+    }
 });
