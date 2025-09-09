@@ -1,4 +1,4 @@
-// js/page-loader.js (FINAL v3 - With Title Fix)
+// js/page-loader.js (FINAL v4 - WITH PERFECT TITLE HANDLING)
 
 document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (categorySlug) {
             const pageTitle = `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1)} Posts`;
-            updateTitle(pageTitle); // Title ko pehle hi update kar do
+            updateTitle(pageTitle);
             loadFiltersAndPosts(categorySlug);
         } else {
             updateTitle("Category Not Found");
@@ -38,8 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (postType) {
-            // YAHAN KOI CHANGE NAHI HAI, YEH PEHLE SE HI THEEK THA
-            updateTitle(pageTitle);
+            // Hum page ka title yahan set NAHI karenge, HTML se aane denge
             loadPosts(`/api/posts/type/${postType}`);
         }
     }
@@ -47,21 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Helper Functions ---
 
     function updateTitle(title) {
-        // Yeh function ab bilkul sahi hai
-        const titleElement = document.getElementById('category-title') || document.querySelector('h1');
+        // Yeh function ab sirf category.html ke liye use hoga
+        const titleElement = document.getElementById('category-title');
         if (titleElement && title) {
             titleElement.textContent = title;
             document.title = `${title} - EZGOVTJOB`;
         }
     }
 
-    // Baaki saare functions (loadFiltersAndPosts, loadFilters, loadPosts, createPostCard) waise hi rahenge
-    async function loadFiltersAndPosts(catSlug) { /* ... NO CHANGE ... */ }
-    async function loadFilters(catSlug) { /* ... NO CHANGE ... */ }
-    async function loadPosts(apiEndpoint) { /* ... NO CHANGE ... */ }
-    function createPostCard(post) { /* ... NO CHANGE ... */ }
-
-    // --- PASTE THE FULL FUNCTIONS HERE TO BE SAFE ---
     async function loadFiltersAndPosts(catSlug) {
         loadFilters(catSlug);
         loadPosts(`/api/category/${catSlug}`);
@@ -72,16 +64,20 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch(`${BACKEND_URL}/api/subcategories/${catSlug}`);
             const subCategories = await res.json();
+            
             filterSelect.innerHTML = `<option value="${catSlug}">All ${catSlug.toUpperCase()}</option>`;
+            
             subCategories.forEach(sub => {
                 filterSelect.innerHTML += `<option value="${sub.slug}">${sub.name}</option>`;
             });
+
             filterSelect.addEventListener('change', (event) => {
                 const selectedSlug = event.target.value;
                 const isMainCategory = selectedSlug === catSlug;
                 const apiEndpoint = isMainCategory ? `/api/category/${selectedSlug}` : `/api/posts/subcategory/${selectedSlug}`;
                 loadPosts(apiEndpoint);
             });
+
         } catch (error) { console.error('Failed to load filters:', error); }
     }
 
