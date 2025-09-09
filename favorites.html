@@ -8,14 +8,67 @@
   <script>tailwind.config={darkMode:'class', theme:{extend:{colors:{brand:'#2563eb'}}}}</script>
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
-  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800">
-    <div class="mx-auto max-w-5xl px-4 py-3 flex items-center gap-3">
-      <a href="index.html" class="flex items-center gap-2">
-        <div class="h-8 w-8 rounded bg-brand text-white grid place-content-center font-bold">EV</div>
-        <div class="font-semibold">Favorites</div>
-      </a>
+ <!-- === FINAL CORRECTED HEADER (FOR ALL HTML FILES) === -->
+<header class="sticky top-0 z-50 glass shadow-sm border-b border-white/20 dark:border-slate-800">
+    <div class="mx-auto max-w-7xl px-4 py-3">
+        <!-- Top Row: Logo, Nav, Search, and Toggles -->
+        <div class="flex items-center">
+            <!-- Logo -->
+            <a href="/" class="flex items-center gap-3 flex-shrink-0">
+                <img src="images/logo.png" alt="EZGOVTJOB Logo" class="h-9 w-9 rounded-full object-cover">
+                <span class="text-lg font-bold">EZGOVTJOB</span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center ml-8 gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <a class="hover:text-blue-600" href="/">Home</a>
+                <a class="hover:text-blue-600" href="notifications.html">Notifications</a>
+                <a class="hover:text-blue-600" href="admit-cards.html">Admit Cards</a>
+                <a class="hover:text-blue-600" href="results.html">Results</a>
+                <a class="hover:text-blue-600" href="answer-keys.html">Answer Keys</a>
+                <a class="hover:text-blue-600" href="syllabus.html">Syllabus</a>
+            </nav>
+
+            <!-- Right Side Items (Search, Toggles) -->
+            <div class="flex items-center gap-4 ml-auto">
+                <!-- Desktop Search Form -->
+                <form action="search.html" method="GET" class="hidden lg:flex items-center">
+                    <input type="search" name="q" placeholder="Search..." class="w-40 rounded-l-md border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm px-3 py-1.5">
+                    <button type="submit" class="bg-blue-600 text-white px-3 py-1.5 rounded-r-md hover:bg-blue-700">Go</button>
+                </form>
+
+                <!-- Theme Toggle & Hamburger -->
+                <div class="flex items-center gap-2">
+                    <button id="themeToggle" class="rounded-lg border border-slate-200 dark:border-slate-700 p-2">
+                        <svg id="theme-icon-light" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <button id="hamburger-btn" class="md:hidden rounded-lg border border-slate-200 dark:border-slate-700 p-2">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation Panel (Expanded) -->
+        <div id="mobile-nav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 px-4 pb-3 pt-2">
+            <!-- Mobile Search Form -->
+            <form action="search.html" method="GET" class="flex items-center mb-4">
+                <input type="search" name="q" placeholder="Search for a job..." class="w-full rounded-l-md border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm px-3 py-1.5">
+                <button type="submit" class="bg-blue-600 text-white px-3 py-1.5 rounded-r-md hover:bg-blue-700">Go</button>
+            </form>
+            <!-- Mobile Links -->
+            <nav class="grid gap-2 text-sm">
+                <a class="hover:text-blue-600 p-2 rounded" href="/">Home</a>
+                <a class="hover:text-blue-600 p-2 rounded" href="notifications.html">Notifications</a>
+                <a class="hover:text-blue-600 p-2 rounded" href="admit-cards.html">Admit Cards</a>
+                <a class="hover:text-blue-600 p-2 rounded" href="results.html">Results</a>
+                <a class="hover:text-blue-600 p-2 rounded" href="answer-keys.html">Answer Keys</a>
+                <a class="hover:text-blue-600 p-2 rounded" href="syllabus.html">Syllabus</a>
+            </nav>
+        </div>
     </div>
-  </header>
+</header>
   <main class="mx-auto max-w-5xl px-4 py-6">
     <ul id="favList" class="divide-y divide-slate-200 dark:divide-slate-800"></ul>
   </main>
