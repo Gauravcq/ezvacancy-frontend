@@ -70,18 +70,58 @@
       </div>
     </section>
 
-    <!-- LATEST UPDATES SECTION (With Swiper.js) -->
-    <section id="latest-updates" class="py-16 overflow-hidden">
-      <div class="mx-auto max-w-7xl px-4">
-        <div class="text-center mb-12" data-aos="fade-up"><h2 class="text-3xl font-bold">Latest Updates</h2><p class="mt-2 text-slate-600 dark:text-slate-400">Stay informed with our feed of notifications, admit cards, and results.</p></div>
-        <div class="swiper" id="updates-swiper" data-aos="fade-up" data-aos-delay="100">
-          <div class="swiper-wrapper pb-12" id="updates-swiper-wrapper">
-            <!-- JavaScript yahan slides daalega -->
-          </div>
-          <div class="swiper-pagination"></div>
+    <!-- index.html (REPLACE THE LATEST UPDATES SECTION WITH THIS) -->
+
+<!-- === LATEST UPDATES SECTION (NEW 3-COLUMN LAYOUT) === -->
+<section id="latest-updates" class="py-16">
+    <div class="mx-auto max-w-7xl px-4">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h2 class="text-3xl font-bold">Latest Updates</h2>
+            <p class="mt-2 text-slate-600 dark:text-slate-400">Notifications, Admit Cards, and Results at a Glance</p>
         </div>
-      </div>
-    </section>
+        
+        <!-- Grid container for the 3 columns -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Column 1: SSC -->
+            <div class="flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-lg" data-aos="fade-up">
+                <h3 class="text-xl font-bold p-4 border-b border-slate-200 dark:border-slate-700 text-center bg-blue-500 text-white rounded-t-xl">SSC Updates</h3>
+                <ul id="ssc-updates-list" class="p-4 space-y-3 flex-grow">
+                    <!-- JS yahan SSC posts daalega -->
+                    <li class="text-center text-slate-500">Loading...</li>
+                </ul>
+                <div class="p-4 border-t border-slate-200 dark:border-slate-700 text-center">
+                    <a href="category.html?type=ssc" class="font-semibold text-blue-600 hover:underline">View All SSC →</a>
+                </div>
+            </div>
+
+            <!-- Column 2: Railway -->
+            <div class="flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                <h3 class="text-xl font-bold p-4 border-b border-slate-200 dark:border-slate-700 text-center bg-red-500 text-white rounded-t-xl">Railway Updates</h3>
+                <ul id="railway-updates-list" class="p-4 space-y-3 flex-grow">
+                    <!-- JS yahan Railway posts daalega -->
+                    <li class="text-center text-slate-500">Loading...</li>
+                </ul>
+                <div class="p-4 border-t border-slate-200 dark:border-slate-700 text-center">
+                    <a href="category.html?type=railway" class="font-semibold text-red-600 hover:underline">View All Railway →</a>
+                </div>
+            </div>
+
+            <!-- Column 3: Banking -->
+            <div class="flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                <h3 class="text-xl font-bold p-4 border-b border-slate-200 dark:border-slate-700 text-center bg-green-500 text-white rounded-t-xl">Banking Updates</h3>
+                <ul id="banking-updates-list" class="p-4 space-y-3 flex-grow">
+                    <!-- JS yahan Banking posts daalega -->
+                    <li class="text-center text-slate-500">Loading...</li>
+                </ul>
+                <div class="p-4 border-t border-slate-200 dark:border-slate-700 text-center">
+                    <a href="category.html?type=banking" class="font-semibold text-green-600 hover:underline">View All Banking →</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
 
     <!-- TOOLS & RESOURCES SECTION -->
     <section id="tools" class="bg-white dark:bg-slate-900/40 py-16">
