@@ -1,38 +1,53 @@
-import { posts } from './app.js';
+// FRONTEND -> js/search.js
 
-const qEl = document.getElementById('q');
-const typeEl = document.getElementById('type');
-const scopeEl = document.getElementById('scope');
-const form = document.getElementById('searchForm');
-const out = document.getElementById('results');
-const count = document.getElementById('count');
+document.addEventListener('DOMContentLoaded', () => {
+    const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
+    const postsContainer = document.getElementById('posts-container');
+    const searchTitle = document.getElementById('search-title');
 
-const params = new URLSearchParams(location.search);
-qEl.value = params.get('q') || '';
-if (params.get('type')) typeEl.value = params.get('type');
-if (params.get('scope')) scopeEl.value = params.get('scope');
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get('q'); // URL se search query nikalo
 
-function formatDate(iso) { const d = new Date(iso); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+    if (query && searchTitle) {
+        searchTitle.textContent = `Search Results for: "${query}"`;
+        document.title = `Search for "${query}" - EZGOVTJOB`;
+        searchPosts(query);
+    } else {
+        if (searchTitle) searchTitle.textContent = 'Please enter a search term.';
+    }
 
-function run() {
-  const q = qEl.value.trim().toLowerCase();
-  const type = typeEl.value;
-  const scope = scopeEl.value;
-  let results = posts;
-  if (type) results = results.filter(p => p.type === type);
-  if (scope) results = results.filter(p => p.category === scope);
-  if (q) results = results.filter(p => [p.title,p.exam,p.sub,p.type].join(' ').toLowerCase().includes(q));
-  results = results.sort((a,b)=> new Date(b.date)-new Date(a.date));
+    async function searchPosts(searchTerm) {
+        postsContainer.innerHTML = '<p class="col-span-full text-center">Searching...</p>';
+        try {
+            const res = await fetch(`${BACKEND_URL}/api/search?q=${encodeURIComponent(searchTerm)}`);
+            const posts = await res.json();
 
-  count.textContent = `${results.length} results`;
-  out.innerHTML = results.map(p => `
-    <li class="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/60">
-      <a href="post.html?slug=${p.slug}" class="block">
-        <div class="font-medium">${p.title}</div>
-        <div class="text-xs text-slate-500">${p.sub} • ${p.type.toUpperCase()} • ${formatDate(p.date)}</div>
-      </a>
-    </li>
-  `).join('') || `<li class="p-4 text-slate-500 text-sm">No results</li>`;
+            if (!posts || posts.length === 0) {
+                postsContainer.innerHTML = `<p class="col-span-full text-center">No results found for "${searchTerm}".</p>`;
+                return;
+            }
+            postsContainer.innerHTML = posts.map(createPostCard).join('');
+        } catch (error) {
+            console.error('Search failed:', error);
+            postsContainer.innerHTML = '<p class="col-span-full text-center text-red-500">Something went wrong.</p>';
+        }
+    }
+});
+
+function createPostCard(post) {
+    const postDate = new Date(post.postDate).toLocaleDateString('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric'
+    });
+    return `
+        <a href="post.html?slug=${post.slug}" class="card-hover-effect block bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md">
+            <h3 class="font-bold text-lg mb-2">${post.title}</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                Category: ${post.SubCategory?.Category?.name || 'N/A'}
+            </p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Posted on: ${postDate}
+            </p>
+            <span class="font-semibold text-blue-600 mt-4 inline-block">Read More →</span>
+        </a>
+    `;
 }
-form.addEventListener('submit', (e)=>{ e.preventDefault(); run(); history.replaceState({},'',`?q=${encodeURIComponent(qEl.value)}&type=${typeEl.value}&scope=${scopeEl.value}`); });
-run();
