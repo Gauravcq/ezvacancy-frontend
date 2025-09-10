@@ -1,39 +1,72 @@
-// FRONTEND -> js/search.js
+// FRONTEND -> js/search.js (FINAL, CORRECTED VERSION)
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- CONFIGURATION ---
     const BACKEND_URL = 'https://ezvacancy-backend.onrender.com';
+    
+    // --- ELEMENT SELECTORS ---
     const postsContainer = document.getElementById('posts-container');
-    const searchTitle = document.getElementById('search-title');
+    const searchTitleElement = document.getElementById('search-title');
 
-    const params = new URLSearchParams(window.location.search);
-    const query = params.get('q'); // URL se search query nikalo
-
-    if (query && searchTitle) {
-        searchTitle.textContent = `Search Results for: "${query}"`;
-        document.title = `Search for "${query}" - EZGOVTJOB`;
-        searchPosts(query);
-    } else {
-        if (searchTitle) searchTitle.textContent = 'Please enter a search term.';
+    if (!postsContainer || !searchTitleElement) {
+        console.error('Required elements (posts-container or search-title) not found.');
+        return;
     }
 
+    // --- LOGIC ---
+    // 1. Get the search query from the URL
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get('q');
+
+    // 2. Update the page title and fetch posts
+    if (query && query.trim() !== '') {
+        const searchTerm = query.trim();
+        searchTitleElement.textContent = `Search Results for: "${searchTerm}"`;
+        document.title = `Search for "${searchTerm}" - EZGOVTJOB`;
+        searchPosts(searchTerm);
+    } else {
+        searchTitleElement.textContent = 'Please enter a search term';
+        postsContainer.innerHTML = '<p class="col-span-full text-center">You can search for jobs using the search bar in the header.</p>';
+    }
+
+    // --- FUNCTIONS ---
+
+    /**
+     * Fetches posts from the backend based on the search term.
+     * @param {string} searchTerm - The user's search query.
+     */
     async function searchPosts(searchTerm) {
-        postsContainer.innerHTML = '<p class="col-span-full text-center">Searching...</p>';
+        postsContainer.innerHTML = '<p class="col-span-full text-center text-slate-500">Searching...</p>';
         try {
-            const res = await fetch(`${BACKEND_URL}/api/search?q=${encodeURIComponent(searchTerm)}`);
-            const posts = await res.json();
+            // Encode the search term to handle special characters like spaces
+            const encodedTerm = encodeURIComponent(searchTerm);
+            const response = await fetch(`${BACKEND_URL}/api/search?q=${encodedTerm}`);
+            
+            if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+
+            const posts = await response.json();
 
             if (!posts || posts.length === 0) {
-                postsContainer.innerHTML = `<p class="col-span-full text-center">No results found for "${searchTerm}".</p>`;
+                postsContainer.innerHTML = `<p class="col-span-full text-center text-slate-500">No results found for "${searchTerm}".</p>`;
                 return;
             }
+            // If results are found, render them
             postsContainer.innerHTML = posts.map(createPostCard).join('');
+
         } catch (error) {
             console.error('Search failed:', error);
-            postsContainer.innerHTML = '<p class="col-span-full text-center text-red-500">Something went wrong.</p>';
+            postsContainer.innerHTML = '<p class="col-span-full text-center text-red-500">Something went wrong while searching. Please try again.</p>';
         }
     }
 });
 
+/**
+ * Creates the HTML for a single post card.
+ * @param {object} post - The post data from the API.
+ * @returns {string} - The HTML string for the card.
+ */
 function createPostCard(post) {
     const postDate = new Date(post.postDate).toLocaleDateString('en-GB', {
         day: '2-digit', month: 'short', year: 'numeric'
